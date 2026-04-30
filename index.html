@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a1509">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Barbearia Magalhães">
+<meta name="description" content="Sistema de Gestão - Barbearia Magalhães">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Barbearia Magalhães</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111009;
+    --bg2: #1c1a10;
+    --card: #201e12;
+    --card2: #252310;
+    --border: #3a3520;
+    --gold: #c9a84c;
+    --gold2: #e8c96d;
+    --gold-dim: rgba(201,168,76,0.15);
+    --text: #f0ead6;
+    --text2: #9a8f6e;
+    --text3: #5a5240;
+    --red: #c0392b;
+    --green: #27ae60;
+    --blue: #2980b9;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 10px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 8px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: var(--gold);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .logo-text { font-family: 'Playfair Display', serif; font-size: 14px; line-height: 1.2; color: var(--gold2); }
+  .logo-sub { font-size: 9px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; }
+
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .nav-btn.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #111;
+    font-weight: 600;
+  }
+  .nav-btn:hover:not(.active) { border-color: var(--gold); color: var(--gold); }
+
+  /* ── PAGES ── */
+  .page { display: none; padding: 16px; animation: fadeIn .2s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── CARDS ── */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .stat-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--text); margin-bottom: 4px; }
+  .stat-sub { font-size: 11px; color: var(--text2); }
+  .stat-sub.accent { color: var(--gold); }
+
+  /* ── SECTION CARD ── */
+  .section-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); }
+
+  /* ── FATURAMENTO CHART ── */
+  .chart-wrap { padding: 16px; }
+  .chart-toggle { display: flex; gap: 6px; }
+  .toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all .2s;
+  }
+  .toggle-btn.active { background: var(--gold); border-color: var(--gold); color: #111; font-weight: 600; }
+
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 120px;
+    margin-top: 16px;
+    padding-bottom: 24px;
+    position: relative;
+  }
+  .chart-bars::after {
+    content: '';
+    position: absolute;
+    bottom: 24px; left: 0; right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .bar {
+    width: 100%;
+    background: var(--gold-dim);
+    border-radius: 4px 4px 0 0;
+    border: 1px solid var(--border);
+    transition: height .4s ease;
+    position: relative;
+    cursor: pointer;
+    min-height: 4px;
+  }
+  .bar.filled { background: linear-gradient(to top, var(--gold), var(--gold2)); border-color: var(--gold); }
+  .bar-label { font-size: 9px; color: var(--text3); text-align: center; }
+
+  /* ── SERVIÇOS MAIS PEDIDOS ── */
+  .service-rank { padding: 0 16px 16px; }
+  .rank-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rank-item:last-child { border-bottom: none; }
+  .rank-num { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--text3); width: 24px; }
+  .rank-info { flex: 1; }
+  .rank-name { font-size: 14px; font-weight: 500; }
+  .rank-count { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .rank-bar-wrap { width: 80px; height: 4px; background: var(--border); border-radius: 2px; }
+  .rank-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; }
+  .rank-value { font-size: 13px; color: var(--gold); font-weight: 600; width: 70px; text-align: right; }
+
+  /* ── PRÓXIMOS AGENDAMENTOS ── */
+  .appt-list { padding: 0 16px 16px; }
+  .appt-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .appt-item:last-child { border-bottom: none; }
+  .appt-time {
+    text-align: center;
+    min-width: 44px;
+  }
+  .appt-hour { font-size: 15px; font-weight: 600; color: var(--gold); }
+  .appt-date-s { font-size: 10px; color: var(--text3); }
+  .appt-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+  .appt-info { flex: 1; }
+  .appt-client { font-size: 14px; font-weight: 500; }
+  .appt-service { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .appt-price { font-size: 13px; color: var(--gold); font-weight: 600; }
+  .appt-del {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text3);
+    border-radius: 6px;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all .2s;
+  }
+  .appt-del:hover { border-color: var(--red); color: var(--red); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text3);
+  }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
+  .empty-text { font-size: 13px; }
+
+  /* ── AGENDA PAGE ── */
+  .agenda-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .date-nav { display: flex; align-items: center; gap: 8px; flex: 1; }
+  .date-nav button {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    width: 36px; height: 36px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .date-nav button:hover { border-color: var(--gold); color: var(--gold); }
+  .date-display {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .date-display span { display: block; font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
+
+  .btn-primary {
+    background: var(--gold);
+    border: none;
+    color: #111;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    display: flex; align-items: center; gap: 6px;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .btn-primary:hover { background: var(--gold2); }
+  .btn-secondary {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all .2s;
+  }
+  .btn-secondary:hover { border-color: var(--gold); }
+
+  .time-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .time-slot {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .time-slot-hour {
+    font-size: 12px;
+    color: var(--text3);
+    width: 44px;
+    padding-top: 8px;
+    flex-shrink: 0;
+  }
+  .time-slot-content {
+    flex: 1;
+    min-height: 36px;
+    border-left: 1px solid var(--border);
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .slot-appt {
+    background: var(--gold-dim);
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .slot-appt:hover { background: rgba(201,168,76,0.25); }
+  .slot-appt-name { font-size: 13px; font-weight: 500; }
+  .slot-appt-info { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 16px 16px 0 0;
+    padding: 20px 20px 32px;
+    width: 100%;
+    max-width: 500px;
+    animation: slideUp .25s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--gold2);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-close {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 6px;
+    width: 28px; height: 28px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; display: block; }
+  .form-input, .form-select {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    transition: border .2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .form-input:focus, .form-select:focus { outline: none; border-color: var(--gold); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .modal-actions .btn-primary { flex: 1; justify-content: center; }
+  .modal-actions .btn-secondary { flex: 1; text-align: center; }
+
+  /* ── SERVIÇOS PAGE ── */
+  .service-grid { display: grid; gap: 10px; }
+  .service-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .service-icon {
+    width: 40px; height: 40px;
+    background: var(--gold-dim);
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .service-info { flex: 1; }
+  .service-name { font-size: 15px; font-weight: 500; }
+  .service-duration { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .service-price { font-size: 16px; color: var(--gold); font-weight: 600; }
+  .service-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 6px;
+    width: 30px; height: 30px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .icon-btn.del:hover { border-color: var(--red); color: var(--red); }
+  .icon-btn.edit:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--card2);
+    border: 1px solid var(--gold);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    z-index: 999;
+    transition: transform .3s ease;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── INSTALL BANNER ── */
+  .install-banner {
+    display: none;
+    background: var(--gold-dim);
+    border: 1px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    align-items: center;
+    gap: 12px;
+  }
+  .install-banner.show { display: flex; }
+  .install-banner-text { flex: 1; font-size: 13px; line-height: 1.4; }
+  .install-banner-text strong { color: var(--gold2); display: block; margin-bottom: 2px; }
+  .install-banner-close {
+    background: transparent;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 2px;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── MOBILE NAV BOTTOM ── */
+  @media (max-width: 500px) {
+    .topbar { flex-wrap: nowrap; }
+    .nav-tabs { display: none; }
+    .bottom-nav {
+      display: flex !important;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      z-index: 100;
+      padding: 8px 0 env(safe-area-inset-bottom);
+    }
+    .page { padding-bottom: 80px; }
+  }
+  .bottom-nav {
+    display: none;
+  }
+  .bnav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    color: var(--text3);
+    font-size: 9px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: color .2s;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .bnav-btn.active { color: var(--gold); }
+  .bnav-icon { font-size: 20px; }
+
+  @media (min-width: 501px) {
+    .bottom-nav { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">✂</div>
+    <div>
+      <div class="logo-text">Barbearia Magalhães</div>
+      <div class="logo-sub">Sistema de Gestão</div>
+    </div>
+  </div>
+  <nav class="nav-tabs">
+    <button class="nav-btn active" onclick="showPage('dashboard',this)">◈ Dashboard</button>
+    <button class="nav-btn" onclick="showPage('agenda',this)">⊙ Agenda</button>
+    <button class="nav-btn" onclick="showPage('servicos',this)">✦ Serviços</button>
+  </nav>
+</div>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bnav-btn active" onclick="showPage('dashboard',this,true)">
+    <span class="bnav-icon">◈</span>Dashboard
+  </button>
+  <button class="bnav-btn" onclick="showPage('agenda',this,true)">
+    <span class="bnav-icon">⊙</span>Agenda
+  </button>
+  <button class="bnav-btn" onclick="showPage('servicos',this,true)">
+    <span class="bnav-icon">✦</span>Serviços
+  </button>
+</nav>
+
+<!-- ════════════ DASHBOARD ════════════ -->
+<div class="page active" id="page-dashboard">
+
+  <div class="install-banner" id="installBanner">
+    <div style="font-size:24px">📲</div>
+    <div class="install-banner-text">
+      <strong>Instalar como App</strong>
+      Adicione à tela inicial para usar como aplicativo!
+    </div>
+    <button class="btn-primary" id="installBtn" style="font-size:12px;padding:8px 12px;">Instalar</button>
+    <button class="install-banner-close" onclick="document.getElementById('installBanner').classList.remove('show')">×</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Hoje</div>
+      <div class="stat-value" id="stat-hoje">R$ 0</div>
+      <div class="stat-sub" id="stat-hoje-qt">0 atendimentos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Esta Semana</div>
+      <div class="stat-value" id="stat-semana">R$ 0</div>
+      <div class="stat-sub accent">acumulado</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Este Mês</div>
+      <div class="stat-value" id="stat-mes">R$ 0</div>
+      <div class="stat-sub" id="stat-mes-qt">0 atendimentos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Ticket Médio</div>
+      <div class="stat-value" id="stat-ticket">R$ 0</div>
+      <div class="stat-sub">por cliente</div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-title">Faturamento</span>
+      <div class="chart-toggle">
+        <button class="toggle-btn active" id="toggleSemana" onclick="setChartMode('semana')">Semana</button>
+        <button class="toggle-btn" id="toggleMes" onclick="setChartMode('mes')">Mês</button>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-bars" id="chartBars"></div>
+    </div>
+    <div class="section-header" style="border-top:1px solid var(--border);border-bottom:none;">
+      <span class="section-title">Serviços Mais Pedidos</span>
+    </div>
+    <div class="service-rank" id="serviceRank">
+      <div class="empty-state"><div class="empty-icon">✂</div><div class="empty-text">Nenhum serviço ainda</div></div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-title">Próximos Agendamentos</span>
+      <button class="btn-primary" style="padding:6px 12px;font-size:11px;" onclick="openModal('new')">+ Novo</button>
+    </div>
+    <div class="appt-list" id="nextAppts"></div>
+  </div>
+</div>
+
+<!-- ════════════ AGENDA ════════════ -->
+<div class="page" id="page-agenda">
+  <div class="agenda-controls">
+    <div class="date-nav">
+      <button onclick="changeAgendaDay(-1)">‹</button>
+      <div class="date-display" id="agendaDateDisplay">
+        <span id="agendaDayName">–</span>
+        <span id="agendaDateFull">–</span>
+      </div>
+      <button onclick="changeAgendaDay(1)">›</button>
+    </div>
+    <button class="btn-primary" onclick="openModal('new')">+ Agendar</button>
+  </div>
+
+  <div class="section-card">
+    <div class="time-slots" id="agendaSlots" style="padding:16px"></div>
+  </div>
+</div>
+
+<!-- ════════════ SERVIÇOS ════════════ -->
+<div class="page" id="page-servicos">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+    <div>
+      <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--gold2)">Serviços</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px;">Gerencie seu catálogo</div>
+    </div>
+    <button class="btn-primary" onclick="openServiceModal()">+ Serviço</button>
+  </div>
+  <div class="service-grid" id="serviceGrid"></div>
+</div>
+
+<!-- ════════════ MODAL AGENDAMENTO ════════════ -->
+<div class="modal-overlay" id="modalAgendamento">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modalTitle">Novo Agendamento</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nome do Cliente</label>
+      <input class="form-input" id="inp-cliente" placeholder="Ex: João Silva" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Serviço</label>
+      <select class="form-select" id="inp-servico" onchange="autoFillPrice()">
+        <option value="">Selecione...</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Data</label>
+        <input class="form-input" id="inp-data" type="date" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Horário</label>
+        <input class="form-input" id="inp-hora" type="time" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Valor (R$)</label>
+      <input class="form-input" id="inp-valor" type="number" step="0.01" placeholder="0,00" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-select" id="inp-status">
+        <option value="agendado">Agendado</option>
+        <option value="concluido">Concluído</option>
+        <option value="cancelado">Cancelado</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveAgendamento()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MODAL SERVIÇO ════════════ -->
+<div class="modal-overlay" id="modalServico">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modalServicoTitle">Novo Serviço</span>
+      <button class="modal-close" onclick="closeServiceModal()">×</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nome do Serviço</label>
+      <input class="form-input" id="sv-nome" placeholder="Ex: Corte Degradê" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Preço (R$)</label>
+        <input class="form-input" id="sv-preco" type="number" step="0.50" placeholder="0,00" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Duração (min)</label>
+        <input class="form-input" id="sv-duracao" type="number" placeholder="30" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Ícone (emoji)</label>
+      <input class="form-input" id="sv-icone" placeholder="✂" maxlength="2" style="font-size:20px;" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeServiceModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveServico()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  BANCO DE DADOS LOCAL (localStorage)
+// ══════════════════════════════════════════
+const DB = {
+  get(key) {
+    try { return JSON.parse(localStorage.getItem('bmg_' + key)) || []; }
+    catch(e) { return []; }
+  },
+  set(key, val) {
+    try { localStorage.setItem('bmg_' + key, JSON.stringify(val)); return true; }
+    catch(e) { return false; }
+  },
+  // Exportar backup JSON
+  export() {
+    const data = {
+      agendamentos: DB.get('agendamentos'),
+      servicos: DB.get('servicos'),
+      exported: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'barbearia-backup-' + new Date().toLocaleDateString('pt-BR').replace(/\//g,'-') + '.json';
+    a.click();
+  }
+};
+
+// ══════════════════════════════════════════
+//  DADOS INICIAIS
+// ══════════════════════════════════════════
+function initData() {
+  if (DB.get('servicos').length === 0) {
+    DB.set('servicos', [
+      { id: uid(), nome: 'Corte Simples', preco: 35, duracao: 30, icone: '✂' },
+      { id: uid(), nome: 'Corte + Barba', preco: 60, duracao: 45, icone: '🪒' },
+      { id: uid(), nome: 'Barba', preco: 30, duracao: 20, icone: '🧔' },
+      { id: uid(), nome: 'Corte Degradê', preco: 45, duracao: 35, icone: '💈' },
+      { id: uid(), nome: 'Hidratação', preco: 40, duracao: 30, icone: '✨' },
+    ]);
+  }
+}
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+// ══════════════════════════════════════════
+//  NAVEGAÇÃO
+// ══════════════════════════════════════════
+function showPage(id, btn, isMobile=false) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+
+  if (isMobile) {
+    document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  } else {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  }
+  btn.classList.add('active');
+
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'agenda') renderAgenda();
+  if (id === 'servicos') renderServicos();
+}
+
+// ══════════════════════════════════════════
+//  CHART MODE
+// ══════════════════════════════════════════
+let chartMode = 'semana';
+function setChartMode(mode) {
+  chartMode = mode;
+  document.getElementById('toggleSemana').classList.toggle('active', mode==='semana');
+  document.getElementById('toggleMes').classList.toggle('active', mode==='mes');
+  renderChart();
+}
+
+// ══════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════
+function renderDashboard() {
+  const appts = DB.get('agendamentos').filter(a => a.status === 'concluido');
+  const now = new Date();
+  const todayStr = toDateStr(now);
+
+  const hoje = appts.filter(a => a.data === todayStr);
+  const semana = appts.filter(a => isSameWeek(new Date(a.data), now));
+  const mes = appts.filter(a => {
+    const d = new Date(a.data);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+
+  const sumVal = arr => arr.reduce((s, a) => s + (parseFloat(a.valor)||0), 0);
+
+  document.getElementById('stat-hoje').textContent = formatBRL(sumVal(hoje));
+  document.getElementById('stat-hoje-qt').textContent = hoje.length + ' atendimento' + (hoje.length!==1?'s':'');
+  document.getElementById('stat-semana').textContent = formatBRL(sumVal(semana));
+  document.getElementById('stat-mes').textContent = formatBRL(sumVal(mes));
+  document.getElementById('stat-mes-qt').textContent = mes.length + ' atendimento' + (mes.length!==1?'s':'');
+  const ticket = mes.length ? sumVal(mes) / mes.length : 0;
+  document.getElementById('stat-ticket').textContent = formatBRL(ticket);
+
+  renderChart();
+  renderServiceRank(appts);
+  renderNextAppts();
+}
+
+function renderChart() {
+  const appts = DB.get('agendamentos').filter(a => a.status === 'concluido');
+  const now = new Date();
+  const bars = document.getElementById('chartBars');
+  bars.innerHTML = '';
+
+  let labels = [], values = [];
+  if (chartMode === 'semana') {
+    const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now); d.setDate(d.getDate() - i);
+      const ds = toDateStr(d);
+      const sum = appts.filter(a => a.data === ds).reduce((s,a) => s+(parseFloat(a.valor)||0), 0);
+      labels.push(days[d.getDay()]);
+      values.push(sum);
+    }
+  } else {
+    const weeks = [0,0,0,0];
+    const mStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    appts.forEach(a => {
+      const d = new Date(a.data);
+      if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+        const wk = Math.floor((d.getDate() - 1) / 7);
+        weeks[Math.min(wk, 3)] += parseFloat(a.valor)||0;
+      }
+    });
+    labels = ['S1','S2','S3','S4'];
+    values = weeks;
+  }
+
+  const max = Math.max(...values, 1);
+  const maxH = 80;
+
+  labels.forEach((lbl, i) => {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const h = Math.round((values[i] / max) * maxH);
+    col.innerHTML = `
+      <div class="bar ${values[i]>0?'filled':''}" style="height:${Math.max(h,4)}px" title="R$ ${values[i].toFixed(2)}"></div>
+      <div class="bar-label">${lbl}</div>
+    `;
+    bars.appendChild(col);
+  });
+}
+
+function renderServiceRank(appts) {
+  const el = document.getElementById('serviceRank');
+  const counts = {};
+  const vals = {};
+  appts.forEach(a => {
+    if (!a.servico) return;
+    counts[a.servico] = (counts[a.servico]||0) + 1;
+    vals[a.servico] = (vals[a.servico]||0) + (parseFloat(a.valor)||0);
+  });
+  const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
+  if (!sorted.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">✂</div><div class="empty-text">Nenhum serviço registrado ainda</div></div>';
+    return;
+  }
+  const maxC = sorted[0][1];
+  el.innerHTML = sorted.map(([nome,cnt],i) => `
+    <div class="rank-item">
+      <div class="rank-num">${i+1}</div>
+      <div class="rank-info">
+        <div class="rank-name">${nome}</div>
+        <div class="rank-count">${cnt} atendimento${cnt!==1?'s':''}</div>
+      </div>
+      <div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:${Math.round(cnt/maxC*100)}%"></div></div>
+      <div class="rank-value">${formatBRL(vals[nome])}</div>
+    </div>
+  `).join('');
+}
+
+function renderNextAppts() {
+  const el = document.getElementById('nextAppts');
+  const now = new Date();
+  const nowStr = toDateStr(now);
+  const all = DB.get('agendamentos')
+    .filter(a => a.status === 'agendado' && (a.data > nowStr || (a.data === nowStr && a.hora >= now.toTimeString().slice(0,5))))
+    .sort((a,b) => (a.data+a.hora).localeCompare(b.data+b.hora))
+    .slice(0, 5);
+
+  if (!all.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">⏰</div><div class="empty-text">Nenhum agendamento ainda</div></div>';
+    return;
+  }
+  el.innerHTML = all.map(a => `
+    <div class="appt-item">
+      <div class="appt-time">
+        <div class="appt-hour">${a.hora}</div>
+        <div class="appt-date-s">${formatDateShort(a.data)}</div>
+      </div>
+      <div class="appt-dot"></div>
+      <div class="appt-info">
+        <div class="appt-client">${a.cliente}</div>
+        <div class="appt-service">${a.servico}</div>
+      </div>
+      <div class="appt-price">${formatBRL(a.valor)}</div>
+      <button class="appt-del" onclick="completeAppt('${a.id}')" title="Concluir">✓</button>
+      <button class="appt-del" onclick="deleteAppt('${a.id}')" title="Remover">×</button>
+    </div>
+  `).join('');
+}
+
+function completeAppt(id) {
+  const appts = DB.get('agendamentos');
+  const i = appts.findIndex(a => a.id === id);
+  if (i >= 0) { appts[i].status = 'concluido'; DB.set('agendamentos', appts); }
+  renderDashboard();
+  showToast('Atendimento concluído! ✓');
+}
+
+function deleteAppt(id) {
+  if (!confirm('Remover agendamento?')) return;
+  const appts = DB.get('agendamentos').filter(a => a.id !== id);
+  DB.set('agendamentos', appts);
+  renderDashboard();
+  renderAgenda();
+  showToast('Agendamento removido');
+}
+
+// ══════════════════════════════════════════
+//  AGENDA
+// ══════════════════════════════════════════
+let agendaDate = new Date();
+
+function renderAgenda() {
+  const ds = toDateStr(agendaDate);
+  const days = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  document.getElementById('agendaDayName').textContent = days[agendaDate.getDay()];
+  document.getElementById('agendaDateFull').textContent = agendaDate.toLocaleDateString('pt-BR', {day:'2-digit',month:'long',year:'numeric'});
+
+  const appts = DB.get('agendamentos').filter(a => a.data === ds);
+  const slots = document.getElementById('agendaSlots');
+  const hours = [];
+  for (let h = 8; h <= 20; h++) hours.push(h);
+
+  slots.innerHTML = hours.map(h => {
+    const hStr = h.toString().padStart(2,'0');
+    const dayAppts = appts
+      .filter(a => a.hora.startsWith(hStr))
+      .sort((a,b) => a.hora.localeCompare(b.hora));
+    const aHtml = dayAppts.map(a => `
+      <div class="slot-appt">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <div class="slot-appt-name">${a.cliente}</div>
+          <div style="display:flex;gap:4px">
+            <span style="font-size:11px;color:var(--gold);font-weight:600">${formatBRL(a.valor)}</span>
+            <button class="icon-btn del" onclick="deleteAppt('${a.id}')" style="width:22px;height:22px;font-size:11px">×</button>
+          </div>
+        </div>
+        <div class="slot-appt-info">${a.hora} · ${a.servico} · <span style="color:${a.status==='concluido'?'var(--green)':a.status==='cancelado'?'var(--red)':'var(--text2)'};">${a.status}</span></div>
+      </div>
+    `).join('');
+    return `<div class="time-slot">
+      <div class="time-slot-hour">${hStr}:00</div>
+      <div class="time-slot-content">${aHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function changeAgendaDay(d) {
+  agendaDate = new Date(agendaDate);
+  agendaDate.setDate(agendaDate.getDate() + d);
+  renderAgenda();
+}
+
+// ══════════════════════════════════════════
+//  MODAL AGENDAMENTO
+// ══════════════════════════════════════════
+let editingId = null;
+
+function openModal(mode, id=null) {
+  editingId = id;
+  document.getElementById('modalTitle').textContent = id ? 'Editar Agendamento' : 'Novo Agendamento';
+
+  // Populate service select
+  const sel = document.getElementById('inp-servico');
+  const servicos = DB.get('servicos');
+  sel.innerHTML = '<option value="">Selecione...</option>' +
+    servicos.map(s => `<option value="${s.nome}" data-preco="${s.preco}">${s.nome} — ${formatBRL(s.preco)}</option>`).join('');
+
+  if (id) {
+    const a = DB.get('agendamentos').find(x => x.id === id);
+    if (a) {
+      document.getElementById('inp-cliente').value = a.cliente;
+      document.getElementById('inp-servico').value = a.servico;
+      document.getElementById('inp-data').value = a.data;
+      document.getElementById('inp-hora').value = a.hora;
+      document.getElementById('inp-valor').value = a.valor;
+      document.getElementById('inp-status').value = a.status;
+    }
+  } else {
+    document.getElementById('inp-cliente').value = '';
+    document.getElementById('inp-servico').value = '';
+    document.getElementById('inp-data').value = toDateStr(agendaDate || new Date());
+    document.getElementById('inp-hora').value = '09:00';
+    document.getElementById('inp-valor').value = '';
+    document.getElementById('inp-status').value = 'agendado';
+  }
+
+  document.getElementById('modalAgendamento').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalAgendamento').classList.remove('open');
+  editingId = null;
+}
+
+function autoFillPrice() {
+  const sel = document.getElementById('inp-servico');
+  const opt = sel.options[sel.selectedIndex];
+  if (opt && opt.dataset.preco) {
+    document.getElementById('inp-valor').value = opt.dataset.preco;
+  }
+}
+
+function saveAgendamento() {
+  const cliente = document.getElementById('inp-cliente').value.trim();
+  const servico = document.getElementById('inp-servico').value;
+  const data = document.getElementById('inp-data').value;
+  const hora = document.getElementById('inp-hora').value;
+  const valor = parseFloat(document.getElementById('inp-valor').value) || 0;
+  const status = document.getElementById('inp-status').value;
+
+  if (!cliente || !servico || !data || !hora) { showToast('Preencha todos os campos!'); return; }
+
+  const appts = DB.get('agendamentos');
+  if (editingId) {
+    const i = appts.findIndex(a => a.id === editingId);
+    if (i >= 0) appts[i] = { ...appts[i], cliente, servico, data, hora, valor, status };
+  } else {
+    appts.push({ id: uid(), cliente, servico, data, hora, valor, status, criado: new Date().toISOString() });
+  }
+  DB.set('agendamentos', appts);
+  closeModal();
+  renderDashboard();
+  renderAgenda();
+  showToast(editingId ? 'Agendamento atualizado!' : 'Agendamento salvo! ✓');
+}
+
+// ══════════════════════════════════════════
+//  SERVIÇOS
+// ══════════════════════════════════════════
+let editingServiceId = null;
+
+function renderServicos() {
+  const servicos = DB.get('servicos');
+  const grid = document.getElementById('serviceGrid');
+  if (!servicos.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">✦</div><div class="empty-text">Nenhum serviço cadastrado</div></div>';
+    return;
+  }
+  grid.innerHTML = servicos.map(s => `
+    <div class="service-card">
+      <div class="service-icon">${s.icone||'✂'}</div>
+      <div class="service-info">
+        <div class="service-name">${s.nome}</div>
+        <div class="service-duration">⏱ ${s.duracao||30} min</div>
+      </div>
+      <div class="service-price">${formatBRL(s.preco)}</div>
+      <div class="service-actions">
+        <button class="icon-btn edit" onclick="editService('${s.id}')">✎</button>
+        <button class="icon-btn del" onclick="deleteService('${s.id}')">×</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openServiceModal(id=null) {
+  editingServiceId = id;
+  document.getElementById('modalServicoTitle').textContent = id ? 'Editar Serviço' : 'Novo Serviço';
+  if (id) {
+    const s = DB.get('servicos').find(x => x.id === id);
+    if (s) {
+      document.getElementById('sv-nome').value = s.nome;
+      document.getElementById('sv-preco').value = s.preco;
+      document.getElementById('sv-duracao').value = s.duracao;
+      document.getElementById('sv-icone').value = s.icone || '✂';
+    }
+  } else {
+    document.getElementById('sv-nome').value = '';
+    document.getElementById('sv-preco').value = '';
+    document.getElementById('sv-duracao').value = '30';
+    document.getElementById('sv-icone').value = '✂';
+  }
+  document.getElementById('modalServico').classList.add('open');
+}
+
+function closeServiceModal() {
+  document.getElementById('modalServico').classList.remove('open');
+  editingServiceId = null;
+}
+
+function editService(id) { openServiceModal(id); }
+
+function saveServico() {
+  const nome = document.getElementById('sv-nome').value.trim();
+  const preco = parseFloat(document.getElementById('sv-preco').value) || 0;
+  const duracao = parseInt(document.getElementById('sv-duracao').value) || 30;
+  const icone = document.getElementById('sv-icone').value.trim() || '✂';
+  if (!nome || !preco) { showToast('Preencha nome e preço!'); return; }
+
+  const servicos = DB.get('servicos');
+  if (editingServiceId) {
+    const i = servicos.findIndex(s => s.id === editingServiceId);
+    if (i >= 0) servicos[i] = { ...servicos[i], nome, preco, duracao, icone };
+  } else {
+    servicos.push({ id: uid(), nome, preco, duracao, icone });
+  }
+  DB.set('servicos', servicos);
+  closeServiceModal();
+  renderServicos();
+  showToast(editingServiceId ? 'Serviço atualizado!' : 'Serviço cadastrado! ✦');
+}
+
+function deleteService(id) {
+  if (!confirm('Remover este serviço?')) return;
+  DB.set('servicos', DB.get('servicos').filter(s => s.id !== id));
+  renderServicos();
+  showToast('Serviço removido');
+}
+
+// ══════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════
+function toDateStr(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth()+1).padStart(2,'0') + '-' +
+    String(d.getDate()).padStart(2,'0');
+}
+
+function isSameWeek(d, ref) {
+  const start = new Date(ref);
+  start.setDate(ref.getDate() - ref.getDay());
+  start.setHours(0,0,0,0);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  end.setHours(23,59,59,999);
+  return d >= start && d <= end;
+}
+
+function formatBRL(v) {
+  return 'R$ ' + (parseFloat(v)||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function formatDateShort(ds) {
+  const [y,m,d] = ds.split('-');
+  return d + '/' + m;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ══════════════════════════════════════════
+//  PWA — INSTALL PROMPT
+// ══════════════════════════════════════════
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').classList.add('show');
+});
+
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    document.getElementById('installBanner').classList.remove('show');
+    showToast('App instalado com sucesso! 🎉');
+  }
+  deferredPrompt = null;
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').classList.remove('show');
+  showToast('App instalado! 🎉');
+});
+
+// ══════════════════════════════════════════
+//  SERVICE WORKER REGISTER
+// ══════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+initData();
+renderDashboard();
+</script>
+</body>
+</html>
