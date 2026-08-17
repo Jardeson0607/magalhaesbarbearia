@@ -21,13 +21,14 @@
       --border-color: #e2e8f0;
       --success: #16a34a;
       --success-bg: #f0fdf4;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
       --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: var(--bg-body); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* Header Mobile */
     header {
       background: var(--card-bg);
       border-bottom: 2px solid var(--gold-border);
@@ -53,7 +54,6 @@
 
     main { flex: 1; width: 100%; max-width: 580px; margin: 0 auto; padding: 14px; }
 
-    /* Barra da Data Atual */
     .date-navigator {
       background: var(--card-bg);
       border: 1px solid var(--gold-border);
@@ -79,7 +79,6 @@
       outline: none; cursor: pointer;
     }
 
-    /* Lista de Horários */
     .slot-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
     .slot-card {
       background: var(--card-bg);
@@ -100,6 +99,8 @@
     .slot-info .name { font-weight: 700; font-size: 1rem; color: #0f172a; }
     .slot-info .service { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
 
+    .slot-actions { display: flex; align-items: center; gap: 6px; }
+
     .btn-add {
       background: var(--gold-light); color: var(--gold-dark);
       border: 1px solid var(--gold-border); border-radius: 8px;
@@ -109,7 +110,13 @@
     .btn-finish {
       background: #dcfce7; color: var(--success);
       border: 1px solid #86efac; border-radius: 8px;
-      padding: 8px 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
+      padding: 8px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
+    }
+    .btn-delete {
+      background: var(--danger-bg); color: var(--danger);
+      border: 1px solid #fecaca; border-radius: 8px;
+      width: 36px; height: 36px; font-size: 0.9rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
     }
 
     .lunch-divider {
@@ -119,7 +126,6 @@
       letter-spacing: 1.5px; font-size: 0.85rem;
     }
 
-    /* Modais Responsivos */
     .modal {
       display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.6); justify-content: center; align-items: flex-end;
@@ -218,7 +224,6 @@
 
     <!-- ABA DASHBOARD (FATURAMENTO) -->
     <section id="view-dashboard" style="display: none;">
-      <!-- Filtros de Período -->
       <div class="filter-box">
         <div class="quick-filters">
           <button class="q-btn active" onclick="setDashboardPeriod('today', this)">Hoje</button>
@@ -233,14 +238,12 @@
         </div>
       </div>
 
-      <!-- Card Principal -->
       <div class="kpi-main">
-        <div class="title" id="kpiPeriodTitle">Faturamento Selecionado</div>
+        <div class="title">Faturamento Selecionado</div>
         <div class="value" id="kpiTotalValue">R$ 0,00</div>
         <div style="font-size: 0.85rem; color: var(--text-muted);" id="kpiTotalCount">0 cortes realizados</div>
       </div>
 
-      <!-- Separação por Forma de Pagamento -->
       <div class="payment-breakdown">
         <div class="pay-card">
           <span><i class="fa-brands fa-pix" style="color:#00bdae"></i> PIX</span>
@@ -256,7 +259,6 @@
         </div>
       </div>
 
-      <!-- Detalhamento dos Atendimentos -->
       <div class="history-card">
         <h4 style="margin-bottom: 12px; font-size: 0.95rem;">Cortes no Período</h4>
         <div id="finishedList" style="font-size: 0.9rem;"></div>
@@ -264,7 +266,7 @@
     </section>
   </main>
 
-  <!-- MODAL AGENDAR (APENAS NOME E SERVIÇO) -->
+  <!-- MODAL AGENDAR -->
   <div class="modal" id="bookModal">
     <div class="modal-content">
       <h3 id="bookModalTitle" style="margin-bottom: 14px;">Novo Agendamento</h3>
@@ -283,7 +285,7 @@
     </div>
   </div>
 
-  <!-- MODAL CONCLUIR (VALOR E FORMA DE PAGAMENTO) -->
+  <!-- MODAL CONCLUIR -->
   <div class="modal" id="finishModal">
     <div class="modal-content">
       <h3>Concluir Atendimento</h3>
@@ -311,9 +313,8 @@
   </div>
 
   <script>
-    // Substitua pelas credenciais do seu projeto Supabase
-    const SUPABASE_URL = "https://rcbtpavqidddfzgdcfwh.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_JKkyHjxlcd3Ljd0yc63Oag_y9EomqIu";
+    const SUPABASE_URL = "SUA_URL_SUPABASE";
+    const SUPABASE_KEY = "SUA_CHAVE_ANON_SUPABASE";
     
     let supabaseClient = null;
     if (window.supabase && SUPABASE_URL !== "SUA_URL_SUPABASE" && !SUPABASE_URL.includes("SUA_URL")) {
@@ -333,7 +334,6 @@
     let selectedAppointmentId = null;
     let selectedPaymentMethod = 'Dinheiro';
 
-    // Dashboard State
     let filterStartDate = currentDate;
     let filterEndDate = currentDate;
 
@@ -425,10 +425,15 @@
               <div class="name">${app.cliente}</div>
               <div class="service">${app.servico || 'Corte'} ${app.concluido ? `• <b>R$ ${parseFloat(app.valor).toFixed(2)}</b> (${app.metodo_pagamento || 'Dinheiro'})` : ''}</div>
             </div>
-            ${app.concluido 
-              ? `<span style="font-weight:700; color:var(--success); font-size:0.85rem;"><i class="fa-solid fa-circle-check"></i> Pago</span>`
-              : `<button class="btn-finish" onclick="openFinishModal('${app.id}', '${app.cliente}')">Concluir</button>`
-            }
+            <div class="slot-actions">
+              ${app.concluido 
+                ? `<span style="font-weight:700; color:var(--success); font-size:0.85rem; margin-right:4px;"><i class="fa-solid fa-circle-check"></i></span>`
+                : `<button class="btn-finish" onclick="openFinishModal('${app.id}', '${app.cliente}')">Concluir</button>`
+              }
+              <button class="btn-delete" title="Apagar agendamento" onclick="deleteAppointment('${app.id}', '${app.cliente}')">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
           `;
         }
         container.appendChild(card);
@@ -476,6 +481,33 @@
 
       closeModal('bookModal');
       loadAgenda();
+    }
+
+    // Função de Excluir Agendamento
+    async function deleteAppointment(id, clientName) {
+      const confirmDelete = confirm(`Tem certeza que deseja apagar o agendamento de "${clientName}"?`);
+      if (!confirmDelete) return;
+
+      if (supabaseClient) {
+        const { error } = await supabaseClient
+          .from('agendamentos')
+          .delete()
+          .eq('id', id);
+
+        if (error) {
+          alert('Erro ao apagar: ' + error.message);
+          return;
+        }
+      } else {
+        dailyAppointments = dailyAppointments.filter(a => a.id != id);
+      }
+
+      // Atualiza a tela atual
+      if (document.getElementById('view-agenda').style.display !== 'none') {
+        loadAgenda();
+      } else {
+        loadDashboard();
+      }
     }
 
     function openFinishModal(id, client) {
@@ -540,7 +572,6 @@
       }
     }
 
-    // Controle dos Filtros de Faturamento
     function setDashboardPeriod(period, btn) {
       document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -629,8 +660,13 @@
               <div style="font-weight:700; color:var(--text-dark);">${r.cliente}</div>
               <div style="font-size:0.75rem; color:var(--text-muted);">${d}/${m} às ${r.hora} • ${r.metodo_pagamento || 'Dinheiro'}</div>
             </div>
-            <div style="font-weight:800; color:var(--gold-dark); font-size:1rem;">
-              R$ ${parseFloat(r.valor).toFixed(2)}
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-weight:800; color:var(--gold-dark); font-size:1rem;">
+                R$ ${parseFloat(r.valor).toFixed(2)}
+              </span>
+              <button class="btn-delete" title="Apagar do faturamento" onclick="deleteAppointment('${r.id}', '${r.cliente}')">
+                <i class="fa-solid fa-trash"></i>
+              </button>
             </div>
           </div>
         `;
