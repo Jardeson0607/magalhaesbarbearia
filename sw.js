@@ -1,4 +1,4 @@
-const CACHE_NAME = 'magalhaes-barbearia-v4';
+const CACHE_NAME = 'magalhaes-barbearia-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -8,7 +8,6 @@ const ASSETS = [
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
-// Instala e força ativação imediata
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
@@ -16,7 +15,6 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Limpa todos os caches antigos
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -31,15 +29,23 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Estratégia Network-First: busca na internet primeiro; se estiver offline, pega do cache
+// Intercepta e faz cache APENAS de requisições GET
 self.addEventListener('fetch', (event) => {
+  // Ignora chamadas que não sejam GET (ex: POST, PATCH, DELETE do Supabase)
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, networkResponse.clone());
-          return networkResponse;
-        });
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return networkResponse;
       })
       .catch(() => caches.match(event.request))
   );
