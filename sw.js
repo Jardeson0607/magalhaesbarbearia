@@ -1,8 +1,9 @@
-const CACHE_NAME = 'magalhaes-barbearia-v2';
+const CACHE_NAME = 'magalhaes-barbearia-v3';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './logo.webp',
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
