@@ -1,313 +1,392 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#1a1509">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Barbearia Magalhães">
-    
-    <title>Barbearia Magalhães | Gestão</title>
-    
-    <!-- Bibliotecas: Supabase e Fontes -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --bg: #111009; --bg2: #1c1a10; --card: #201e12; --border: #3a3520;
-            --gold: #c9a84c; --gold2: #e8c96d; --gold-dim: rgba(201,168,76,0.15);
-            --text: #f0ead6; --text2: #9a8f6e; --text3: #5a5240;
-            --red: #c0392b; --green: #27ae60; --radius: 12px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magalhães Barbearia - Gestão</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-body: #f8fafc;
+      --card-bg: #ffffff;
+      --gold-primary: #d4af37;
+      --gold-light: #fef9e7;
+      --gold-border: #f1df99;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --success: #16a34a;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
 
-        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-        body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; padding-bottom: 80px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg-body); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
 
-        /* HEADER */
-        .topbar {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 16px; background: var(--bg2); border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 100;
-        }
-        .logo-text { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--gold2); }
-        
-        /* NAV */
-        .nav-tabs { display: flex; gap: 8px; }
-        .nav-btn { 
-            background: transparent; border: 1px solid var(--border); color: var(--text2);
-            padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer;
-        }
-        .nav-btn.active { background: var(--gold); color: #111; font-weight: 600; border-color: var(--gold); }
+    header {
+      background: var(--card-bg);
+      border-bottom: 2px solid var(--gold-border);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.2rem; color: #1e293b; }
+    .brand span { color: var(--gold-primary); }
 
-        /* CARDS & STATS */
-        .page { display: none; padding: 16px; animation: fadeIn 0.3s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .nav-tabs { display: flex; gap: 8px; }
+    .nav-btn {
+      background: none; border: 1px solid var(--gold-border);
+      padding: 8px 16px; border-radius: 8px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; color: var(--text-dark);
+    }
+    .nav-btn.active { background: var(--gold-primary); color: #fff; border-color: var(--gold-primary); }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-        .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-        .stat-label { font-size: 10px; text-transform: uppercase; color: var(--text3); letter-spacing: 1px; }
-        .stat-value { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold2); margin: 4px 0; }
+    main { flex: 1; max-width: 600px; width: 100%; margin: 0 auto; padding: 16px; }
 
-        /* LISTS */
-        .section-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; }
-        .item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); }
-        .item:last-child { border-bottom: none; }
+    /* Seletor de Data */
+    .date-navigator {
+      background: var(--card-bg);
+      border: 1px solid var(--gold-border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+    .date-navigator button {
+      background: var(--gold-light);
+      border: 1px solid var(--gold-border);
+      color: var(--gold-primary);
+      width: 40px; height: 40px; border-radius: 8px;
+      cursor: pointer; font-size: 1rem;
+    }
+    .date-navigator input[type="date"] {
+      font-size: 1.1rem; font-weight: bold; border: none;
+      background: transparent; color: var(--text-dark); text-align: center;
+    }
 
-        /* MODAL */
-        .modal-overlay { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
-            z-index: 200; align-items: flex-end; justify-content: center;
-        }
-        .modal-overlay.open { display: flex; }
-        .modal { 
-            background: var(--bg2); width: 100%; max-width: 500px; padding: 24px; 
-            border-radius: 20px 20px 0 0; border: 1px solid var(--border);
-        }
-        
-        /* FORM */
-        input, select { 
-            width: 100%; background: var(--bg); border: 1px solid var(--border); 
-            color: var(--text); padding: 12px; border-radius: 8px; margin-top: 8px; outline: none;
-        }
-        input:focus { border-color: var(--gold); }
-        .btn-primary { 
-            background: var(--gold); color: #111; border: none; padding: 14px; 
-            border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 16px;
-        }
+    /* Lista de Horários */
+    .slot-list { display: flex; flex-direction: column; gap: 8px; }
+    .slot-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+    .slot-card.booked { border-left: 5px solid var(--gold-primary); background: #fffdf5; }
+    .slot-card.finished { border-left: 5px solid var(--success); background: #f0fdf4; opacity: 0.85; }
 
-        /* TOAST */
-        #toast { 
-            position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
-            background: var(--gold); color: #111; padding: 10px 20px; border-radius: 20px;
-            font-size: 13px; font-weight: 600; display: none; z-index: 300;
-        }
-    </style>
+    .slot-time { font-weight: 700; font-size: 1.1rem; width: 65px; color: var(--text-dark); }
+    .slot-info { flex: 1; margin: 0 10px; }
+    .slot-info .name { font-weight: 600; font-size: 1rem; }
+    .slot-info .service { font-size: 0.8rem; color: var(--text-muted); }
+
+    .btn-action {
+      background: var(--gold-light); color: var(--gold-primary);
+      border: 1px solid var(--gold-border); border-radius: 8px;
+      padding: 6px 12px; cursor: pointer; font-weight: 600; font-size: 0.9rem;
+    }
+    .btn-finish { background: #dcfce7; color: var(--success); border-color: #86efac; }
+
+    /* Separador Almoço */
+    .lunch-divider {
+      text-align: center; font-weight: 700; color: #b45309;
+      background: #fef3c7; border: 1px dashed #f59e0b;
+      padding: 8px; border-radius: 8px; margin: 6px 0;
+      letter-spacing: 2px; font-size: 0.85rem;
+    }
+
+    /* Modal */
+    .modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4); justify-content: center; align-items: center;
+      padding: 16px; z-index: 10;
+    }
+    .modal-content {
+      background: white; border-radius: 12px; padding: 20px;
+      width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    .modal-content h3 { margin-bottom: 12px; }
+    .modal-content input {
+      width: 100%; padding: 10px; margin-bottom: 10px;
+      border: 1px solid var(--border-color); border-radius: 6px;
+    }
+    .modal-btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+
+    /* Dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+    .kpi-card {
+      background: var(--card-bg); border: 1px solid var(--gold-border);
+      padding: 12px 8px; border-radius: 10px; text-align: center; box-shadow: var(--shadow);
+    }
+    .kpi-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    .kpi-value { font-size: 1.2rem; font-weight: 800; color: var(--gold-primary); margin-top: 4px; }
+    .history-card { background: white; border-radius: 10px; padding: 14px; border: 1px solid var(--border-color); }
+  </style>
 </head>
 <body>
 
-<div class="topbar">
-    <div class="logo">
-        <div class="logo-text">Barbearia Magalhães</div>
+  <header>
+    <div class="brand"><i class="fa-solid fa-scissors" style="color:var(--gold-primary)"></i> MAGALHÃES <span>BARBEARIA</span></div>
+    <div class="nav-tabs">
+      <button class="nav-btn active" onclick="switchView('agenda')">Agenda</button>
+      <button class="nav-btn" onclick="switchView('dashboard')">Faturamento</button>
     </div>
-    <nav class="nav-tabs">
-        <button class="nav-btn active" onclick="showPage('dashboard', this)">◈ Dash</button>
-        <button class="nav-btn" onclick="showPage('agenda', this)">⊙ Agenda</button>
-    </nav>
-</div>
+  </header>
 
-<!-- DASHBOARD -->
-<div class="page active" id="page-dashboard">
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">Hoje</div>
-            <div class="stat-value" id="stat-hoje">R$ 0,00</div>
+  <main>
+    <!-- ABA AGENDA -->
+    <section id="view-agenda">
+      <div class="date-navigator">
+        <button onclick="changeDay(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <input type="date" id="currentDateInput" onchange="loadAgenda()">
+        <button onclick="changeDay(1)"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+      <div id="slotsContainer" class="slot-list"></div>
+    </section>
+
+    <!-- ABA DASHBOARD -->
+    <section id="view-dashboard" style="display: none;">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">Hoje</div>
+          <div class="kpi-value" id="totalDay">R$ 0</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">Este Mês</div>
-            <div class="stat-value" id="stat-mes">R$ 0,00</div>
+        <div class="kpi-card">
+          <div class="kpi-title">Semana</div>
+          <div class="kpi-value" id="totalWeek">R$ 0</div>
         </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Mês</div>
+          <div class="kpi-value" id="totalMonth">R$ 0</div>
+        </div>
+      </div>
+      <div class="history-card">
+        <h4>Resumo de Cortes Concluídos</h4>
+        <div id="finishedList" style="margin-top: 10px; font-size: 0.9rem; color: var(--text-muted);"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL AGENDAR -->
+  <div class="modal" id="bookModal">
+    <div class="modal-content">
+      <h3 id="bookModalTitle">Novo Agendamento</h3>
+      <input type="text" id="clientNameInput" placeholder="Nome do Cliente (ex: Seu Zé)">
+      <input type="text" id="serviceInput" value="Cabelo / Barba" placeholder="Serviço">
+      <input type="number" id="priceInput" placeholder="Valor Estimado (R$)" value="30.00">
+      <div class="modal-btns">
+        <button class="nav-btn" onclick="closeModal('bookModal')">Cancelar</button>
+        <button class="nav-btn active" onclick="saveAppointment()">Agendar</button>
+      </div>
     </div>
+  </div>
 
-    <div class="section-card">
-        <div style="padding: 16px; border-bottom: 1px solid var(--border); display:flex; justify-content:space-between;">
-            <span style="font-size:11px; color:var(--text3); text-transform:uppercase;">Próximos da Lista</span>
-            <button onclick="openModal()" style="background:none; border:none; color:var(--gold); cursor:pointer; font-weight:600;">+ Novo</button>
-        </div>
-        <div id="next-list">
-            <!-- Dinâmico -->
-        </div>
+  <!-- MODAL CONCLUIR -->
+  <div class="modal" id="finishModal">
+    <div class="modal-content">
+      <h3>Concluir Corte</h3>
+      <p id="finishClientName" style="margin-bottom: 10px; font-weight: 600;"></p>
+      <input type="number" id="finishPriceInput" placeholder="Valor final cobrado (R$)">
+      <div class="modal-btns">
+        <button class="nav-btn" onclick="closeModal('finishModal')">Voltar</button>
+        <button class="nav-btn active" onclick="confirmFinish()">Recebido & Salvar</button>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- AGENDA -->
-<div class="page" id="page-agenda">
-    <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
-        <input type="date" id="agenda-filter" style="width: auto; margin:0;" onchange="fetchData()">
-        <button class="nav-btn active" onclick="openModal()">+ Agendar</button>
-    </div>
-    <div class="section-card" id="agenda-list">
-        <!-- Dinâmico -->
-    </div>
-</div>
+  <script>
+    const SUPABASE_URL = "SEU_SUPABASE_URL";
+    const SUPABASE_KEY = "SUA_SUPABASE_ANON_KEY";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-<!-- MODAL AGENDAMENTO -->
-<div class="modal-overlay" id="modalAgendamento">
-    <div class="modal">
-        <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
-            <h2 style="font-family:'Playfair Display'; color:var(--gold2)">Novo Agendamento</h2>
-            <button onclick="closeModal()" style="background:none; border:none; color:var(--text3); font-size:24px;">×</button>
-        </div>
-        
-        <label style="font-size:12px; color:var(--text3)">Cliente</label>
-        <input type="text" id="inp-cliente" placeholder="Nome do cliente">
+    let currentDate = new Date().toISOString().split('T')[0];
+    let dailyAppointments = [];
+    let selectedSlot = null;
+    let selectedAppointmentId = null;
 
-        <label style="font-size:12px; color:var(--text3); margin-top:10px; display:block;">Serviço</label>
-        <select id="inp-servico" onchange="updatePrice()"></select>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-            <div>
-                <label style="font-size:12px; color:var(--text3)">Data</label>
-                <input type="date" id="inp-data">
-            </div>
-            <div>
-                <label style="font-size:12px; color:var(--text3)">Hora</label>
-                <input type="time" id="inp-hora">
-            </div>
-        </div>
-
-        <label style="font-size:12px; color:var(--text3); margin-top:10px; display:block;">Valor (R$)</label>
-        <input type="number" id="inp-valor" step="0.01">
-
-        <button class="btn-primary" onclick="saveData()">💾 SALVAR NA NUVEM</button>
-    </div>
-</div>
-
-<div id="toast"></div>
-
-<script>
-// CONFIGURAÇÃO SUPABASE
-const SUPABASE_URL = 'SUA_URL_AQUI';
-const SUPABASE_KEY = 'SUA_KEY_AQUI';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let state = { agendamentos: [], servicos: [] };
-let editingId = null;
-
-// INICIALIZAÇÃO
-async function init() {
-    document.getElementById('inp-data').valueAsDate = new Date();
-    document.getElementById('agenda-filter').valueAsDate = new Date();
-    await fetchServicos();
-    await fetchData();
-}
-
-async function fetchServicos() {
-    const { data } = await supabaseClient.from('servicos').select('*');
-    state.servicos = data || [];
-    const sel = document.getElementById('inp-servico');
-    sel.innerHTML = state.servicos.map(s => `<option value="${s.id}" data-preco="${s.preco}">${s.nome}</option>`).join('');
-}
-
-async function fetchData() {
-    const { data } = await supabaseClient.from('agendamentos').select('*, servicos(*)').order('hora', { ascending: true });
-    state.agendamentos = data || [];
-    renderDashboard();
-    renderAgenda();
-}
-
-function renderDashboard() {
-    const hoje = new Date().toISOString().split('T')[0];
-    const mes = new Date().getMonth();
-    
-    const totalHoje = state.agendamentos
-        .filter(a => a.data === hoje && a.status === 'concluido')
-        .reduce((acc, curr) => acc + Number(curr.valor_pago), 0);
-        
-    const totalMes = state.agendamentos
-        .filter(a => new Date(a.data).getMonth() === mes && a.status === 'concluido')
-        .reduce((acc, curr) => acc + Number(curr.valor_pago), 0);
-
-    document.getElementById('stat-hoje').innerText = `R$ ${totalHoje.toFixed(2)}`;
-    document.getElementById('stat-mes').innerText = `R$ ${totalMes.toFixed(2)}`;
-
-    // Próximos
-    const proximos = state.agendamentos.filter(a => a.status === 'agendado' && a.data >= hoje).slice(0, 5);
-    const container = document.getElementById('next-list');
-    
-    if (proximos.length === 0) {
-        container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text3)">Nenhum agendamento</div>';
-        return;
+    // Gerador de Horários (07:00 até 19:00 com intervalo de 30m)
+    function generateTimes() {
+      const times = [];
+      for (let h = 7; h <= 19; h++) {
+        const hh = h.toString().padStart(2, '0');
+        times.push(`${hh}:00`);
+        if (h < 19) times.push(`${hh}:30`);
+      }
+      return times;
     }
 
-    container.innerHTML = proximos.map(a => `
-        <div class="item">
-            <div>
-                <div style="font-weight:600">${a.cliente_nome}</div>
-                <div style="font-size:11px; color:var(--text2)">${a.hora.slice(0,5)} · ${a.servicos?.nome || 'Corte'}</div>
-            </div>
-            <button onclick="changeStatus('${a.id}', 'concluido')" style="background:var(--gold-dim); border:1px solid var(--gold); color:var(--gold); padding:4px 8px; border-radius:6px; font-size:11px;">Finalizar</button>
-        </div>
-    `).join('');
-}
-
-function renderAgenda() {
-    const filter = document.getElementById('agenda-filter').value;
-    const lista = state.agendamentos.filter(a => a.data === filter);
-    const container = document.getElementById('agenda-list');
-    
-    container.innerHTML = lista.map(a => `
-        <div class="item" style="${a.status === 'concluido' ? 'opacity:0.5' : ''}">
-            <div>
-                <div style="color:var(--gold); font-weight:700">${a.hora.slice(0,5)}</div>
-                <div style="font-weight:600">${a.cliente_nome}</div>
-                <div style="font-size:11px; color:var(--text3)">${a.servicos?.nome} · R$ ${a.valor_pago}</div>
-            </div>
-            <div style="display:flex; gap:8px;">
-                <button onclick="deleteData('${a.id}')" style="background:none; border:none; color:var(--red);">×</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-// AÇÕES
-async function saveData() {
-    const payload = {
-        cliente_nome: document.getElementById('inp-cliente').value,
-        servico_id: document.getElementById('inp-servico').value,
-        data: document.getElementById('inp-data').value,
-        hora: document.getElementById('inp-hora').value,
-        valor_pago: document.getElementById('inp-valor').value,
-        status: 'agendado'
+    window.onload = () => {
+      document.getElementById('currentDateInput').value = currentDate;
+      loadAgenda();
     };
 
-    const { error } = await supabaseClient.from('agendamentos').insert([payload]);
-    if (!error) {
-        showToast("Salvo com sucesso!");
-        closeModal();
-        fetchData();
+    function changeDay(delta) {
+      const d = new Date(currentDate + "T00:00:00");
+      d.setDate(d.getDate() + delta);
+      currentDate = d.toISOString().split('T')[0];
+      document.getElementById('currentDateInput').value = currentDate;
+      loadAgenda();
     }
-}
 
-async function changeStatus(id, status) {
-    await supabaseClient.from('agendamentos').update({ status }).eq('id', id);
-    fetchData();
-    showToast("Status atualizado!");
-}
+    async function loadAgenda() {
+      currentDate = document.getElementById('currentDateInput').value;
+      const { data, error } = await supabase
+        .from('agendamentos')
+        .select('*')
+        .eq('data', currentDate);
 
-async function deleteData(id) {
-    if(confirm("Remover agendamento?")) {
-        await supabaseClient.from('agendamentos').delete().eq('id', id);
-        fetchData();
+      dailyAppointments = data || [];
+      renderSlots();
     }
-}
 
-// UI UTILS
-function showPage(id, btn) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('page-' + id).classList.add('active');
-    btn.classList.add('active');
-}
+    function renderSlots() {
+      const container = document.getElementById('slotsContainer');
+      container.innerHTML = '';
+      const times = generateTimes();
 
-function openModal() { document.getElementById('modalAgendamento').classList.add('open'); updatePrice(); }
-function closeModal() { document.getElementById('modalAgendamento').classList.remove('open'); }
+      times.forEach((time) => {
+        // Separador de Almoço às 12:45
+        if (time === '13:00') {
+          const div = document.createElement('div');
+          div.className = 'lunch-divider';
+          div.innerText = '----- ALMOÇO (12:45 - 13:00) -----';
+          container.appendChild(div);
+        }
 
-function updatePrice() {
-    const sel = document.getElementById('inp-servico');
-    const preco = sel.options[sel.selectedIndex]?.dataset.preco;
-    document.getElementById('inp-valor').value = preco || 0;
-}
+        const app = dailyAppointments.find(a => a.hora === time);
+        const card = document.createElement('div');
+        card.className = `slot-card ${app ? (app.concluido ? 'finished' : 'booked') : ''}`;
 
-function showToast(m) {
-    const t = document.getElementById('toast');
-    t.innerText = m; t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 3000);
-}
+        if (!app) {
+          card.innerHTML = `
+            <div class="slot-time">${time}</div>
+            <div class="slot-info"><span style="color:var(--text-muted)">Livre</span></div>
+            <button class="btn-action" onclick="openBookModal('${time}')"><i class="fa-solid fa-plus"></i></button>
+          `;
+        } else {
+          card.innerHTML = `
+            <div class="slot-time">${time}</div>
+            <div class="slot-info">
+              <div class="name">${app.cliente}</div>
+              <div class="service">${app.servico} - R$ ${parseFloat(app.valor).toFixed(2)}</div>
+            </div>
+            ${app.concluido 
+              ? `<span style="font-weight:700; color:var(--success); font-size:0.85rem;"><i class="fa-solid fa-check"></i> Pago</span>`
+              : `<button class="btn-action btn-finish" onclick="openFinishModal(${app.id}, '${app.cliente}', ${app.valor})">Concluir</button>`
+            }
+          `;
+        }
+        container.appendChild(card);
+      });
+    }
 
-window.onload = init;
-</script>
+    function openBookModal(time) {
+      selectedSlot = time;
+      document.getElementById('bookModalTitle').innerText = `Agendar às ${time}`;
+      document.getElementById('clientNameInput').value = '';
+      document.getElementById('bookModal').style.display = 'flex';
+    }
+
+    async function saveAppointment() {
+      const cliente = document.getElementById('clientNameInput').value;
+      const servico = document.getElementById('serviceInput').value;
+      const valor = parseFloat(document.getElementById('priceInput').value) || 0;
+
+      if (!cliente) return alert('Digite o nome do cliente');
+
+      await supabase.from('agendamentos').insert([{
+        data: currentDate,
+        hora: selectedSlot,
+        cliente,
+        servico,
+        valor,
+        concluido: false
+      }]);
+
+      closeModal('bookModal');
+      loadAgenda();
+    }
+
+    function openFinishModal(id, client, val) {
+      selectedAppointmentId = id;
+      document.getElementById('finishClientName').innerText = client;
+      document.getElementById('finishPriceInput').value = val;
+      document.getElementById('finishModal').style.display = 'flex';
+    }
+
+    async function confirmFinish() {
+      const valorFinal = parseFloat(document.getElementById('finishPriceInput').value) || 0;
+
+      await supabase.from('agendamentos')
+        .update({ concluido: true, valor: valorFinal })
+        .eq('id', selectedAppointmentId);
+
+      closeModal('finishModal');
+      loadAgenda();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    async function switchView(view) {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if (view === 'agenda') {
+        document.querySelector('.nav-btn:nth-child(1)').classList.add('active');
+        document.getElementById('view-agenda').style.display = 'block';
+        document.getElementById('view-dashboard').style.display = 'none';
+        loadAgenda();
+      } else {
+        document.querySelector('.nav-btn:nth-child(2)').classList.add('active');
+        document.getElementById('view-agenda').style.display = 'none';
+        document.getElementById('view-dashboard').style.display = 'block';
+        loadDashboard();
+      }
+    }
+
+    async function loadDashboard() {
+      const { data: records } = await supabase
+        .from('agendamentos')
+        .select('*')
+        .eq('concluido', true);
+
+      if (!records) return;
+
+      const today = new Date().toISOString().split('T')[0];
+      const startOfWeek = new Date();
+      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+      const currentMonth = today.slice(0, 7);
+
+      let totalDay = 0, totalWeek = 0, totalMonth = 0;
+
+      records.forEach(r => {
+        const val = parseFloat(r.valor) || 0;
+        if (r.data === today) totalDay += val;
+        if (new Date(r.data + "T00:00:00") >= startOfWeek) totalWeek += val;
+        if (r.data.startsWith(currentMonth)) totalMonth += val;
+      });
+
+      document.getElementById('totalDay').innerText = `R$ ${totalDay.toFixed(2)}`;
+      document.getElementById('totalWeek').innerText = `R$ ${totalWeek.toFixed(2)}`;
+      document.getElementById('totalMonth').innerText = `R$ ${totalMonth.toFixed(2)}`;
+
+      const list = document.getElementById('finishedList');
+      list.innerHTML = records.slice(-5).reverse().map(r => `
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f1f5f9;">
+          <span>${r.data.split('-').reverse().slice(0,2).join('/')} ${r.hora} - ${r.cliente}</span>
+          <span style="font-weight:700; color:var(--gold-primary)">R$ ${parseFloat(r.valor).toFixed(2)}</span>
+        </div>
+      `).join('') || '<p>Nenhum corte registrado ainda.</p>';
+    }
+  </script>
 </body>
 </html>
