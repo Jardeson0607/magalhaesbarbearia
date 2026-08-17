@@ -274,17 +274,17 @@
     </section>
   </main>
 
-  <!-- MODAL AGENDAR (APENAS O NOME DO CLIENTE) -->
+  <!-- MODAL AGENDAR (APENAS NOME) -->
   <div class="modal" id="bookModal">
     <div class="modal-content">
       <h3 id="bookModalTitle" style="margin-bottom: 14px;">Novo Agendamento</h3>
       <div class="form-group">
         <label>Nome do Cliente</label>
-        <input type="text" id="clientNameInput" class="form-control" placeholder="Digite o nome da pessoa..." autofocus>
+        <input type="text" id="clientNameInput" class="form-control" placeholder="Digite o nome..." autofocus>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn-full" style="background:#f1f5f9; color:var(--text-dark);" onclick="closeModal('bookModal')">Cancelar</button>
-        <button type="button" class="btn-full" id="btnConfirmBook" style="background:var(--gold-primary); color:white;" onclick="saveAppointment()">Agendar Horário</button>
+        <button type="button" class="btn-full" style="background:var(--gold-primary); color:white;" onclick="saveAppointment()">Agendar Horário</button>
       </div>
     </div>
   </div>
@@ -311,20 +311,16 @@
 
       <div class="modal-actions">
         <button type="button" class="btn-full" style="background:#f1f5f9; color:var(--text-dark);" onclick="closeModal('finishModal')">Voltar</button>
-        <button type="button" class="btn-full" id="btnConfirmFinish" style="background:var(--success); color:white;" onclick="confirmFinish()">Concluir & Salvar</button>
+        <button type="button" class="btn-full" style="background:var(--success); color:white;" onclick="confirmFinish()">Concluir & Salvar</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Credenciais Supabase
-    const SUPABASE_URL = "SUA_URL_SUPABASE";
-    const SUPABASE_KEY = "SUA_CHAVE_ANON_SUPABASE";
+    const SUPABASE_URL = "https://rcbtpavqidddfzgdcfwh.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_JKkyHjxlcd3Ljd0yc63Oag_y9EomqIu";
     
-    let supabaseClient = null;
-    if (window.supabase && SUPABASE_URL !== "SUA_URL_SUPABASE" && !SUPABASE_URL.includes("SUA_URL")) {
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
     function formatToLocalDate(dateObj) {
       const y = dateObj.getFullYear();
@@ -359,7 +355,9 @@
       loadAgenda();
 
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW:', err));
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          reg.update();
+        }).catch(() => {});
       }
     });
 
@@ -385,20 +383,12 @@
       dailyAppointments = [];
 
       if (supabaseClient) {
-        try {
-          const { data, error } = await supabaseClient
-            .from('agendamentos')
-            .select('*')
-            .eq('data', currentDate);
+        const { data } = await supabaseClient
+          .from('agendamentos')
+          .select('*')
+          .eq('data', currentDate);
 
-          if (error) {
-            console.error("Erro ao buscar no Supabase:", error);
-          } else if (data) {
-            dailyAppointments = data;
-          }
-        } catch (err) {
-          console.error("Erro de requisição:", err);
-        }
+        if (data) dailyAppointments = data;
       }
 
       renderSlots();
@@ -432,7 +422,7 @@
             <div class="slot-time">${time}</div>
             <div class="slot-info">
               <div class="name">${app.cliente}</div>
-              <div class="service">${app.concluido ? `Recebido: <b>R$ ${parseFloat(app.valor).toFixed(2)}</b> (${app.metodo_pagamento || 'Dinheiro'})` : 'Aguardando corte'}</div>
+              <div class="service">${app.concluido ? `Recebido: <b>R$ ${parseFloat(app.valor).toFixed(2)}</b> (${app.metodo_pagamento || 'Dinheiro'})` : 'Aguardando atendimento'}</div>
             </div>
             <div class="slot-actions">
               ${app.concluido 
@@ -459,48 +449,33 @@
 
     async function saveAppointment() {
       const cliente = document.getElementById('clientNameInput').value.trim();
-      if (!cliente) return alert('Por favor, informe o nome do cliente!');
+      if (!cliente) return alert('Informe o nome do cliente!');
 
-      const btn = document.getElementById('btnConfirmBook');
-      btn.innerText = 'Salvando...';
-      btn.disabled = true;
-
-      try {
-        if (supabaseClient) {
-          const { error } = await supabaseClient.from('agendamentos').insert([{
-            data: currentDate,
-            hora: selectedSlot,
-            cliente: cliente,
-            servico: 'Corte',
-            valor: 0,
-            concluido: false,
-            metodo_pagamento: 'Dinheiro'
-          }]);
-
-          if (error) {
-            alert("Erro ao salvar no banco: " + error.message);
-            console.error(error);
-            return;
-          }
-        } else {
-          dailyAppointments.push({
-            id: Date.now(),
-            data: currentDate,
-            hora: selectedSlot,
-            cliente,
-            servico: 'Corte',
-            valor: 0,
-            concluido: false,
-            metodo_pagamento: 'Dinheiro'
-          });
-        }
-
-        closeModal('bookModal');
-        await loadAgenda();
-      } finally {
-        btn.innerText = 'Agendar Horário';
-        btn.disabled = false;
+      if (supabaseClient) {
+        await supabaseClient.from('agendamentos').insert([{
+          data: currentDate,
+          hora: selectedSlot,
+          cliente: cliente,
+          servico: 'Corte',
+          valor: 0,
+          concluido: false,
+          metodo_pagamento: 'Dinheiro'
+        }]);
+      } else {
+        dailyAppointments.push({
+          id: Date.now(),
+          data: currentDate,
+          hora: selectedSlot,
+          cliente,
+          servico: 'Corte',
+          valor: 0,
+          concluido: false,
+          metodo_pagamento: 'Dinheiro'
+        });
       }
+
+      closeModal('bookModal');
+      await loadAgenda();
     }
 
     async function deleteAppointment(id, clientName) {
@@ -508,23 +483,15 @@
       if (!confirmDelete) return;
 
       if (supabaseClient) {
-        const { error } = await supabaseClient
-          .from('agendamentos')
-          .delete()
-          .eq('id', id);
-
-        if (error) {
-          alert('Erro ao apagar: ' + error.message);
-          return;
-        }
+        await supabaseClient.from('agendamentos').delete().eq('id', id);
       } else {
         dailyAppointments = dailyAppointments.filter(a => a.id != id);
       }
 
       if (document.getElementById('view-agenda').style.display !== 'none') {
-        loadAgenda();
+        await loadAgenda();
       } else {
-        loadDashboard();
+        await loadDashboard();
       }
     }
 
@@ -549,39 +516,26 @@
 
     async function confirmFinish() {
       const valorFinal = parseFloat(document.getElementById('finishPriceInput').value) || 0;
-      const btn = document.getElementById('btnConfirmFinish');
-      btn.innerText = 'Salvando...';
-      btn.disabled = true;
 
-      try {
-        if (supabaseClient) {
-          const { error } = await supabaseClient.from('agendamentos')
-            .update({ 
-              concluido: true, 
-              valor: valorFinal,
-              metodo_pagamento: selectedPaymentMethod 
-            })
-            .eq('id', selectedAppointmentId);
-
-          if (error) {
-            alert('Erro ao concluir: ' + error.message);
-            return;
-          }
-        } else {
-          const app = dailyAppointments.find(a => a.id == selectedAppointmentId);
-          if (app) {
-            app.concluido = true;
-            app.valor = valorFinal;
-            app.metodo_pagamento = selectedPaymentMethod;
-          }
+      if (supabaseClient) {
+        await supabaseClient.from('agendamentos')
+          .update({ 
+            concluido: true, 
+            valor: valorFinal,
+            metodo_pagamento: selectedPaymentMethod 
+          })
+          .eq('id', selectedAppointmentId);
+      } else {
+        const app = dailyAppointments.find(a => a.id == selectedAppointmentId);
+        if (app) {
+          app.concluido = true;
+          app.valor = valorFinal;
+          app.metodo_pagamento = selectedPaymentMethod;
         }
-
-        closeModal('finishModal');
-        await loadAgenda();
-      } finally {
-        btn.innerText = 'Concluir & Salvar';
-        btn.disabled = false;
       }
+
+      closeModal('finishModal');
+      await loadAgenda();
     }
 
     function closeModal(id) {
@@ -644,7 +598,7 @@
       let records = [];
 
       if (supabaseClient) {
-        const { data, error } = await supabaseClient
+        const { data } = await supabaseClient
           .from('agendamentos')
           .select('*')
           .eq('concluido', true)
@@ -652,7 +606,7 @@
           .lte('data', filterEndDate)
           .order('data', { ascending: false });
 
-        if (!error && data) records = data;
+        if (data) records = data;
       } else {
         records = dailyAppointments.filter(a => a.concluido && a.data >= filterStartDate && a.data <= filterEndDate);
       }
