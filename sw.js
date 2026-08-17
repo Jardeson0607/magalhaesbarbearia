@@ -1,4 +1,4 @@
-const CACHE_NAME = 'magalhaes-barbearia-v3';
+const CACHE_NAME = 'magalhaes-barbearia-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -8,28 +8,39 @@ const ASSETS = [
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
+// Instala e força ativação imediata
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+  event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
-  self.skipWaiting();
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
+// Limpa todos os caches antigos
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) return caches.delete(key);
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((res) => res || fetch(e.request))
+// Estratégia Network-First: busca na internet primeiro; se estiver offline, pega do cache
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request)
+      .then((networkResponse) => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        });
+      })
+      .catch(() => caches.match(event.request))
   );
 });
