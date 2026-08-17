@@ -43,12 +43,7 @@
       box-shadow: var(--shadow);
     }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.1rem; color: #1e293b; }
-    .brand img {
-      width: 42px;
-      height: 42px;
-      object-fit: contain;
-      border-radius: 8px;
-    }
+    .brand img { width: 42px; height: 42px; object-fit: contain; border-radius: 8px; }
     .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
     .brand-text span { font-size: 0.75rem; color: var(--gold-dark); letter-spacing: 1px; }
 
@@ -104,15 +99,15 @@
 
     .slot-time { font-weight: 800; font-size: 1.1rem; width: 62px; color: var(--text-dark); }
     .slot-info { flex: 1; margin: 0 10px; }
-    .slot-info .name { font-weight: 700; font-size: 1rem; color: #0f172a; }
-    .slot-info .service { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+    .slot-info .name { font-weight: 700; font-size: 1.05rem; color: #0f172a; }
+    .slot-info .service { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
 
     .slot-actions { display: flex; align-items: center; gap: 6px; }
 
     .btn-add {
       background: var(--gold-light); color: var(--gold-dark);
       border: 1px solid var(--gold-border); border-radius: 8px;
-      width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer;
+      width: 42px; height: 42px; font-size: 1.2rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
     }
     .btn-finish {
@@ -123,7 +118,7 @@
     .btn-delete {
       background: var(--danger-bg); color: var(--danger);
       border: 1px solid #fecaca; border-radius: 8px;
-      width: 36px; height: 36px; font-size: 0.9rem; cursor: pointer;
+      width: 38px; height: 38px; font-size: 0.9rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
     }
 
@@ -156,14 +151,14 @@
     .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
     .form-control {
       width: 100%; padding: 12px; border: 1px solid var(--border-color);
-      border-radius: 8px; font-size: 1rem; outline: none; background: #fafafa;
+      border-radius: 8px; font-size: 1.05rem; outline: none; background: #fafafa;
     }
     .form-control:focus { border-color: var(--gold-primary); background: #fff; }
 
     .pay-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
     .pay-btn {
-      padding: 10px 4px; border: 1px solid var(--border-color); border-radius: 8px;
-      background: #f8fafc; font-weight: 600; font-size: 0.85rem; cursor: pointer; text-align: center;
+      padding: 12px 4px; border: 1px solid var(--border-color); border-radius: 8px;
+      background: #f8fafc; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-align: center;
     }
     .pay-btn.selected {
       background: var(--gold-light); border-color: var(--gold-primary); color: var(--gold-dark);
@@ -235,7 +230,7 @@
       <div id="slotsContainer" class="slot-list"></div>
     </section>
 
-    <!-- ABA DASHBOARD (FATURAMENTO) -->
+    <!-- ABA DASHBOARD -->
     <section id="view-dashboard" style="display: none;">
       <div class="filter-box">
         <div class="quick-filters">
@@ -279,21 +274,17 @@
     </section>
   </main>
 
-  <!-- MODAL AGENDAR -->
+  <!-- MODAL AGENDAR (APENAS O NOME DO CLIENTE) -->
   <div class="modal" id="bookModal">
     <div class="modal-content">
       <h3 id="bookModalTitle" style="margin-bottom: 14px;">Novo Agendamento</h3>
       <div class="form-group">
         <label>Nome do Cliente</label>
-        <input type="text" id="clientNameInput" class="form-control" placeholder="Ex: Seu Antônio, Miguel..." autofocus>
-      </div>
-      <div class="form-group">
-        <label>Serviço</label>
-        <input type="text" id="serviceInput" class="form-control" value="Cabelo / Barba">
+        <input type="text" id="clientNameInput" class="form-control" placeholder="Digite o nome da pessoa..." autofocus>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn-full" style="background:#f1f5f9; color:var(--text-dark);" onclick="closeModal('bookModal')">Cancelar</button>
-        <button type="button" class="btn-full" style="background:var(--gold-primary); color:white;" onclick="saveAppointment()">Confirmar</button>
+        <button type="button" class="btn-full" id="btnConfirmBook" style="background:var(--gold-primary); color:white;" onclick="saveAppointment()">Agendar Horário</button>
       </div>
     </div>
   </div>
@@ -302,10 +293,10 @@
   <div class="modal" id="finishModal">
     <div class="modal-content">
       <h3>Concluir Atendimento</h3>
-      <p id="finishClientName" style="margin: 6px 0 16px 0; font-size: 1.1rem; font-weight: 700; color: var(--gold-dark);"></p>
+      <p id="finishClientName" style="margin: 6px 0 16px 0; font-size: 1.15rem; font-weight: 700; color: var(--gold-dark);"></p>
       
       <div class="form-group">
-        <label>Valor Cobrado (R$)</label>
+        <label>Valor Recebido (R$)</label>
         <input type="number" id="finishPriceInput" class="form-control" placeholder="0.00" step="0.50" style="font-size:1.3rem; font-weight:700;">
       </div>
 
@@ -320,14 +311,15 @@
 
       <div class="modal-actions">
         <button type="button" class="btn-full" style="background:#f1f5f9; color:var(--text-dark);" onclick="closeModal('finishModal')">Voltar</button>
-        <button type="button" class="btn-full" style="background:var(--success); color:white;" onclick="confirmFinish()">Concluir & Receber</button>
+        <button type="button" class="btn-full" id="btnConfirmFinish" style="background:var(--success); color:white;" onclick="confirmFinish()">Concluir & Salvar</button>
       </div>
     </div>
   </div>
 
   <script>
-    const SUPABASE_URL = "https://rcbtpavqidddfzgdcfwh.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_JKkyHjxlcd3Ljd0yc63Oag_y9EomqIu";
+    // Credenciais Supabase
+    const SUPABASE_URL = "SUA_URL_SUPABASE";
+    const SUPABASE_KEY = "SUA_CHAVE_ANON_SUPABASE";
     
     let supabaseClient = null;
     if (window.supabase && SUPABASE_URL !== "SUA_URL_SUPABASE" && !SUPABASE_URL.includes("SUA_URL")) {
@@ -399,9 +391,13 @@
             .select('*')
             .eq('data', currentDate);
 
-          if (!error && data) dailyAppointments = data;
+          if (error) {
+            console.error("Erro ao buscar no Supabase:", error);
+          } else if (data) {
+            dailyAppointments = data;
+          }
         } catch (err) {
-          console.error("Erro ao buscar agenda:", err);
+          console.error("Erro de requisição:", err);
         }
       }
 
@@ -436,14 +432,14 @@
             <div class="slot-time">${time}</div>
             <div class="slot-info">
               <div class="name">${app.cliente}</div>
-              <div class="service">${app.servico || 'Corte'} ${app.concluido ? `• <b>R$ ${parseFloat(app.valor).toFixed(2)}</b> (${app.metodo_pagamento || 'Dinheiro'})` : ''}</div>
+              <div class="service">${app.concluido ? `Recebido: <b>R$ ${parseFloat(app.valor).toFixed(2)}</b> (${app.metodo_pagamento || 'Dinheiro'})` : 'Aguardando corte'}</div>
             </div>
             <div class="slot-actions">
               ${app.concluido 
                 ? `<span style="font-weight:700; color:var(--success); font-size:0.85rem; margin-right:4px;"><i class="fa-solid fa-circle-check"></i></span>`
                 : `<button class="btn-finish" onclick="openFinishModal('${app.id}', '${app.cliente}')">Concluir</button>`
               }
-              <button class="btn-delete" title="Apagar agendamento" onclick="deleteAppointment('${app.id}', '${app.cliente}')">
+              <button class="btn-delete" title="Apagar" onclick="deleteAppointment('${app.id}', '${app.cliente}')">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </div>
@@ -458,46 +454,57 @@
       document.getElementById('bookModalTitle').innerText = `Agendar às ${time}`;
       document.getElementById('clientNameInput').value = '';
       document.getElementById('bookModal').style.display = 'flex';
-      setTimeout(() => document.getElementById('clientNameInput').focus(), 100);
+      setTimeout(() => document.getElementById('clientNameInput').focus(), 150);
     }
 
     async function saveAppointment() {
       const cliente = document.getElementById('clientNameInput').value.trim();
-      const servico = document.getElementById('serviceInput').value.trim();
-
       if (!cliente) return alert('Por favor, informe o nome do cliente!');
 
-      if (supabaseClient) {
-        const { error } = await supabaseClient.from('agendamentos').insert([{
-          data: currentDate,
-          hora: selectedSlot,
-          cliente,
-          servico,
-          valor: 0,
-          concluido: false,
-          metodo_pagamento: 'Dinheiro'
-        }]);
+      const btn = document.getElementById('btnConfirmBook');
+      btn.innerText = 'Salvando...';
+      btn.disabled = true;
 
-        if (error) alert("Erro ao salvar: " + error.message);
-      } else {
-        dailyAppointments.push({
-          id: Date.now(),
-          data: currentDate,
-          hora: selectedSlot,
-          cliente,
-          servico,
-          valor: 0,
-          concluido: false,
-          metodo_pagamento: 'Dinheiro'
-        });
+      try {
+        if (supabaseClient) {
+          const { error } = await supabaseClient.from('agendamentos').insert([{
+            data: currentDate,
+            hora: selectedSlot,
+            cliente: cliente,
+            servico: 'Corte',
+            valor: 0,
+            concluido: false,
+            metodo_pagamento: 'Dinheiro'
+          }]);
+
+          if (error) {
+            alert("Erro ao salvar no banco: " + error.message);
+            console.error(error);
+            return;
+          }
+        } else {
+          dailyAppointments.push({
+            id: Date.now(),
+            data: currentDate,
+            hora: selectedSlot,
+            cliente,
+            servico: 'Corte',
+            valor: 0,
+            concluido: false,
+            metodo_pagamento: 'Dinheiro'
+          });
+        }
+
+        closeModal('bookModal');
+        await loadAgenda();
+      } finally {
+        btn.innerText = 'Agendar Horário';
+        btn.disabled = false;
       }
-
-      closeModal('bookModal');
-      loadAgenda();
     }
 
     async function deleteAppointment(id, clientName) {
-      const confirmDelete = confirm(`Tem certeza que deseja apagar o agendamento de "${clientName}"?`);
+      const confirmDelete = confirm(`Deseja apagar o agendamento de "${clientName}"?`);
       if (!confirmDelete) return;
 
       if (supabaseClient) {
@@ -531,6 +538,7 @@
       document.getElementById('finishClientName').innerText = client;
       document.getElementById('finishPriceInput').value = "30.00";
       document.getElementById('finishModal').style.display = 'flex';
+      setTimeout(() => document.getElementById('finishPriceInput').focus(), 150);
     }
 
     function selectPayMethod(method, btn) {
@@ -541,26 +549,39 @@
 
     async function confirmFinish() {
       const valorFinal = parseFloat(document.getElementById('finishPriceInput').value) || 0;
+      const btn = document.getElementById('btnConfirmFinish');
+      btn.innerText = 'Salvando...';
+      btn.disabled = true;
 
-      if (supabaseClient) {
-        await supabaseClient.from('agendamentos')
-          .update({ 
-            concluido: true, 
-            valor: valorFinal,
-            metodo_pagamento: selectedPaymentMethod 
-          })
-          .eq('id', selectedAppointmentId);
-      } else {
-        const app = dailyAppointments.find(a => a.id == selectedAppointmentId);
-        if (app) {
-          app.concluido = true;
-          app.valor = valorFinal;
-          app.metodo_pagamento = selectedPaymentMethod;
+      try {
+        if (supabaseClient) {
+          const { error } = await supabaseClient.from('agendamentos')
+            .update({ 
+              concluido: true, 
+              valor: valorFinal,
+              metodo_pagamento: selectedPaymentMethod 
+            })
+            .eq('id', selectedAppointmentId);
+
+          if (error) {
+            alert('Erro ao concluir: ' + error.message);
+            return;
+          }
+        } else {
+          const app = dailyAppointments.find(a => a.id == selectedAppointmentId);
+          if (app) {
+            app.concluido = true;
+            app.valor = valorFinal;
+            app.metodo_pagamento = selectedPaymentMethod;
+          }
         }
-      }
 
-      closeModal('finishModal');
-      loadAgenda();
+        closeModal('finishModal');
+        await loadAgenda();
+      } finally {
+        btn.innerText = 'Concluir & Salvar';
+        btn.disabled = false;
+      }
     }
 
     function closeModal(id) {
