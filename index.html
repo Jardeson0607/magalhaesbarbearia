@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Magalhães Barbearia - Gestão</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#d4af37">
@@ -13,128 +13,186 @@
       --bg-body: #f8fafc;
       --card-bg: #ffffff;
       --gold-primary: #d4af37;
+      --gold-dark: #b89628;
       --gold-light: #fef9e7;
       --gold-border: #f1df99;
       --text-dark: #1e293b;
       --text-muted: #64748b;
       --border-color: #e2e8f0;
       --success: #16a34a;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --success-bg: #f0fdf4;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: var(--bg-body); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
 
+    /* Header Mobile */
     header {
       background: var(--card-bg);
       border-bottom: 2px solid var(--gold-border);
-      padding: 12px 20px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
       box-shadow: var(--shadow);
     }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.2rem; color: #1e293b; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.1rem; color: #1e293b; }
     .brand span { color: var(--gold-primary); }
 
-    .nav-tabs { display: flex; gap: 8px; }
+    .nav-tabs { display: flex; gap: 6px; }
     .nav-btn {
       background: none; border: 1px solid var(--gold-border);
-      padding: 8px 16px; border-radius: 8px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s; color: var(--text-dark);
+      padding: 8px 12px; border-radius: 8px; font-weight: 600;
+      cursor: pointer; transition: 0.2s; font-size: 0.85rem; color: var(--text-dark);
     }
     .nav-btn.active { background: var(--gold-primary); color: #fff; border-color: var(--gold-primary); }
 
-    main { flex: 1; max-width: 600px; width: 100%; margin: 0 auto; padding: 16px; }
+    main { flex: 1; width: 100%; max-width: 580px; margin: 0 auto; padding: 14px; }
 
-    /* Barra de navegação por data */
+    /* Barra da Data Atual */
     .date-navigator {
       background: var(--card-bg);
       border: 1px solid var(--gold-border);
       border-radius: 12px;
-      padding: 12px;
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       box-shadow: var(--shadow);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
-    .date-navigator button {
+    .date-btn {
       background: var(--gold-light);
       border: 1px solid var(--gold-border);
-      color: var(--gold-primary);
-      width: 40px; height: 40px; border-radius: 8px;
-      cursor: pointer; font-size: 1rem;
+      color: var(--gold-dark);
+      width: 44px; height: 44px; border-radius: 10px;
+      cursor: pointer; font-size: 1.1rem;
       display: flex; align-items: center; justify-content: center;
     }
     .date-navigator input[type="date"] {
-      font-size: 1.1rem; font-weight: bold; border: none;
+      font-size: 1.15rem; font-weight: 700; border: none;
       background: transparent; color: var(--text-dark); text-align: center;
       outline: none; cursor: pointer;
     }
 
     /* Lista de Horários */
-    .slot-list { display: flex; flex-direction: column; gap: 8px; }
+    .slot-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
     .slot-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 12px 16px;
+      border-radius: 12px;
+      padding: 12px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       box-shadow: var(--shadow);
+      min-height: 58px;
     }
-    .slot-card.booked { border-left: 5px solid var(--gold-primary); background: #fffdf5; }
-    .slot-card.finished { border-left: 5px solid var(--success); background: #f0fdf4; }
+    .slot-card.booked { border-left: 6px solid var(--gold-primary); background: #fffdf5; }
+    .slot-card.finished { border-left: 6px solid var(--success); background: var(--success-bg); }
 
-    .slot-time { font-weight: 700; font-size: 1.1rem; width: 65px; color: var(--text-dark); }
+    .slot-time { font-weight: 800; font-size: 1.1rem; width: 62px; color: var(--text-dark); }
     .slot-info { flex: 1; margin: 0 10px; }
-    .slot-info .name { font-weight: 600; font-size: 1rem; }
-    .slot-info .service { font-size: 0.8rem; color: var(--text-muted); }
+    .slot-info .name { font-weight: 700; font-size: 1rem; color: #0f172a; }
+    .slot-info .service { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
 
-    .btn-action {
-      background: var(--gold-light); color: var(--gold-primary);
+    .btn-add {
+      background: var(--gold-light); color: var(--gold-dark);
       border: 1px solid var(--gold-border); border-radius: 8px;
-      padding: 6px 14px; cursor: pointer; font-weight: 600; font-size: 0.9rem;
+      width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
     }
-    .btn-finish { background: #dcfce7; color: var(--success); border-color: #86efac; }
+    .btn-finish {
+      background: #dcfce7; color: var(--success);
+      border: 1px solid #86efac; border-radius: 8px;
+      padding: 8px 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
+    }
 
-    /* Separador Almoço */
     .lunch-divider {
-      text-align: center; font-weight: 700; color: #b45309;
+      text-align: center; font-weight: 800; color: #b45309;
       background: #fef3c7; border: 1px dashed #f59e0b;
-      padding: 8px; border-radius: 8px; margin: 6px 0;
-      letter-spacing: 2px; font-size: 0.85rem;
+      padding: 10px; border-radius: 10px; margin: 6px 0;
+      letter-spacing: 1.5px; font-size: 0.85rem;
     }
 
-    /* Modais */
+    /* Modais Responsivos */
     .modal {
       display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.5); justify-content: center; align-items: center;
-      padding: 16px; z-index: 100;
+      background: rgba(0,0,0,0.6); justify-content: center; align-items: flex-end;
+      z-index: 100;
+    }
+    @media(min-width: 600px) {
+      .modal { align-items: center; padding: 16px; }
     }
     .modal-content {
-      background: white; border-radius: 12px; padding: 20px;
-      width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      background: white; border-radius: 20px 20px 0 0; padding: 22px;
+      width: 100%; max-width: 480px; box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+      animation: slideUp 0.25s ease-out;
     }
-    .modal-content h3 { margin-bottom: 12px; }
-    .modal-content input {
-      width: 100%; padding: 10px; margin-bottom: 10px;
-      border: 1px solid var(--border-color); border-radius: 6px;
-      font-size: 0.95rem;
+    @media(min-width: 600px) {
+      .modal-content { border-radius: 16px; }
     }
-    .modal-btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-    /* Dashboard */
-    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-    .kpi-card {
-      background: var(--card-bg); border: 1px solid var(--gold-border);
-      padding: 14px 8px; border-radius: 10px; text-align: center; box-shadow: var(--shadow);
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
+    .form-control {
+      width: 100%; padding: 12px; border: 1px solid var(--border-color);
+      border-radius: 8px; font-size: 1rem; outline: none; background: #fafafa;
     }
-    .kpi-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-    .kpi-value { font-size: 1.2rem; font-weight: 800; color: var(--gold-primary); margin-top: 4px; }
-    .history-card { background: white; border-radius: 10px; padding: 16px; border: 1px solid var(--border-color); }
+    .form-control:focus { border-color: var(--gold-primary); background: #fff; }
+
+    .pay-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+    .pay-btn {
+      padding: 10px 4px; border: 1px solid var(--border-color); border-radius: 8px;
+      background: #f8fafc; font-weight: 600; font-size: 0.85rem; cursor: pointer; text-align: center;
+    }
+    .pay-btn.selected {
+      background: var(--gold-light); border-color: var(--gold-primary); color: var(--gold-dark);
+    }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-full {
+      flex: 1; padding: 14px; border-radius: 10px; font-size: 1rem;
+      font-weight: 700; border: none; cursor: pointer;
+    }
+
+    /* Dashboard & Filtros */
+    .filter-box {
+      background: white; border: 1px solid var(--gold-border);
+      border-radius: 12px; padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow);
+    }
+    .quick-filters { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
+    .q-btn {
+      padding: 6px 12px; background: #f1f5f9; border: 1px solid var(--border-color);
+      border-radius: 20px; font-size: 0.8rem; font-weight: 600; white-space: nowrap; cursor: pointer;
+    }
+    .q-btn.active { background: var(--gold-primary); color: white; border-color: var(--gold-primary); }
+
+    .custom-range { display: flex; gap: 8px; align-items: center; }
+    .custom-range input { flex: 1; padding: 8px; font-size: 0.85rem; border: 1px solid var(--border-color); border-radius: 6px; }
+
+    .kpi-main {
+      background: linear-gradient(135deg, #fffdf5, #fef9e7);
+      border: 1.5px solid var(--gold-border); border-radius: 14px;
+      padding: 18px; text-align: center; margin-bottom: 14px; box-shadow: var(--shadow);
+    }
+    .kpi-main .title { font-size: 0.85rem; font-weight: 700; color: var(--gold-dark); text-transform: uppercase; }
+    .kpi-main .value { font-size: 2.2rem; font-weight: 900; color: #1e293b; margin: 4px 0; }
+
+    .payment-breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+    .pay-card {
+      background: white; border: 1px solid var(--border-color);
+      border-radius: 10px; padding: 10px 6px; text-align: center; box-shadow: var(--shadow);
+    }
+    .pay-card span { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: block; }
+    .pay-card strong { font-size: 0.95rem; color: var(--text-dark); margin-top: 2px; display: block; }
+
+    .history-card { background: white; border-radius: 12px; padding: 16px; border: 1px solid var(--border-color); }
   </style>
 </head>
 <body>
@@ -151,74 +209,117 @@
     <!-- ABA AGENDA -->
     <section id="view-agenda">
       <div class="date-navigator">
-        <button type="button" onclick="changeDay(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="date-btn" type="button" onclick="changeDay(-1)"><i class="fa-solid fa-chevron-left"></i></button>
         <input type="date" id="currentDateInput" onchange="handleDateChange()">
-        <button type="button" onclick="changeDay(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <button class="date-btn" type="button" onclick="changeDay(1)"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
       <div id="slotsContainer" class="slot-list"></div>
     </section>
 
-    <!-- ABA DASHBOARD -->
+    <!-- ABA DASHBOARD (FATURAMENTO) -->
     <section id="view-dashboard" style="display: none;">
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-title">Hoje</div>
-          <div class="kpi-value" id="totalDay">R$ 0,00</div>
+      <!-- Filtros de Período -->
+      <div class="filter-box">
+        <div class="quick-filters">
+          <button class="q-btn active" onclick="setDashboardPeriod('today', this)">Hoje</button>
+          <button class="q-btn" onclick="setDashboardPeriod('week', this)">Esta Semana</button>
+          <button class="q-btn" onclick="setDashboardPeriod('month', this)">Este Mês</button>
+          <button class="q-btn" onclick="setDashboardPeriod('all', this)">Todo Período</button>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-title">Semana</div>
-          <div class="kpi-value" id="totalWeek">R$ 0,00</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-title">Mês</div>
-          <div class="kpi-value" id="totalMonth">R$ 0,00</div>
+        <div class="custom-range">
+          <input type="date" id="filterStart" onchange="applyCustomRange()">
+          <span style="color:var(--text-muted); font-size:0.8rem;">até</span>
+          <input type="date" id="filterEnd" onchange="applyCustomRange()">
         </div>
       </div>
+
+      <!-- Card Principal -->
+      <div class="kpi-main">
+        <div class="title" id="kpiPeriodTitle">Faturamento Selecionado</div>
+        <div class="value" id="kpiTotalValue">R$ 0,00</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);" id="kpiTotalCount">0 cortes realizados</div>
+      </div>
+
+      <!-- Separação por Forma de Pagamento -->
+      <div class="payment-breakdown">
+        <div class="pay-card">
+          <span><i class="fa-brands fa-pix" style="color:#00bdae"></i> PIX</span>
+          <strong id="kpiPix">R$ 0,00</strong>
+        </div>
+        <div class="pay-card">
+          <span><i class="fa-solid fa-credit-card" style="color:#3b82f6"></i> Cartão</span>
+          <strong id="kpiCard">R$ 0,00</strong>
+        </div>
+        <div class="pay-card">
+          <span><i class="fa-solid fa-money-bill-wave" style="color:#16a34a"></i> Dinheiro</span>
+          <strong id="kpiCash">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <!-- Detalhamento dos Atendimentos -->
       <div class="history-card">
-        <h4 style="margin-bottom: 12px;">Últimos Cortes Concluídos</h4>
-        <div id="finishedList" style="font-size: 0.9rem; color: var(--text-muted);"></div>
+        <h4 style="margin-bottom: 12px; font-size: 0.95rem;">Cortes no Período</h4>
+        <div id="finishedList" style="font-size: 0.9rem;"></div>
       </div>
     </section>
   </main>
 
-  <!-- MODAL AGENDAR -->
+  <!-- MODAL AGENDAR (APENAS NOME E SERVIÇO) -->
   <div class="modal" id="bookModal">
     <div class="modal-content">
-      <h3 id="bookModalTitle">Novo Agendamento</h3>
-      <input type="text" id="clientNameInput" placeholder="Nome do Cliente (ex: Seu Zé)">
-      <input type="text" id="serviceInput" value="Cabelo / Barba" placeholder="Serviço">
-      <input type="number" id="priceInput" placeholder="Valor Estimado (R$)" value="30.00" step="0.01">
-      <div class="modal-btns">
-        <button type="button" class="nav-btn" onclick="closeModal('bookModal')">Cancelar</button>
-        <button type="button" class="nav-btn active" onclick="saveAppointment()">Agendar</button>
+      <h3 id="bookModalTitle" style="margin-bottom: 14px;">Novo Agendamento</h3>
+      <div class="form-group">
+        <label>Nome do Cliente</label>
+        <input type="text" id="clientNameInput" class="form-control" placeholder="Ex: Seu Antônio, Miguel..." autofocus>
+      </div>
+      <div class="form-group">
+        <label>Serviço</label>
+        <input type="text" id="serviceInput" class="form-control" value="Cabelo / Barba">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-full" style="background:#f1f5f9; color:var(--text-dark);" onclick="closeModal('bookModal')">Cancelar</button>
+        <button type="button" class="btn-full" style="background:var(--gold-primary); color:white;" onclick="saveAppointment()">Confirmar</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL CONCLUIR -->
+  <!-- MODAL CONCLUIR (VALOR E FORMA DE PAGAMENTO) -->
   <div class="modal" id="finishModal">
     <div class="modal-content">
-      <h3>Concluir Corte</h3>
-      <p id="finishClientName" style="margin-bottom: 12px; font-weight: 600;"></p>
-      <input type="number" id="finishPriceInput" placeholder="Valor final cobrado (R$)" step="0.01">
-      <div class="modal-btns">
-        <button type="button" class="nav-btn" onclick="closeModal('finishModal')">Voltar</button>
-        <button type="button" class="nav-btn active" onclick="confirmFinish()">Recebido & Salvar</button>
+      <h3>Concluir Atendimento</h3>
+      <p id="finishClientName" style="margin: 6px 0 16px 0; font-size: 1.1rem; font-weight: 700; color: var(--gold-dark);"></p>
+      
+      <div class="form-group">
+        <label>Valor Cobrado (R$)</label>
+        <input type="number" id="finishPriceInput" class="form-control" placeholder="0.00" step="0.50" style="font-size:1.3rem; font-weight:700;">
+      </div>
+
+      <div class="form-group">
+        <label>Forma de Pagamento</label>
+        <div class="pay-methods">
+          <button type="button" class="pay-btn selected" onclick="selectPayMethod('Dinheiro', this)"><i class="fa-solid fa-money-bill"></i> Dinheiro</button>
+          <button type="button" class="pay-btn" onclick="selectPayMethod('PIX', this)"><i class="fa-brands fa-pix"></i> PIX</button>
+          <button type="button" class="pay-btn" onclick="selectPayMethod('Cartão', this)"><i class="fa-solid fa-credit-card"></i> Cartão</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-full" style="background:#f1f5f9; color:var(--text-dark);" onclick="closeModal('finishModal')">Voltar</button>
+        <button type="button" class="btn-full" style="background:var(--success); color:white;" onclick="confirmFinish()">Concluir & Receber</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Configurações do Supabase
-    const SUPABASE_URL = "SUA_URL_SUPABASE";
-    const SUPABASE_KEY = "SUA_CHAVE_ANON_SUPABASE";
+    // Substitua pelas credenciais do seu projeto Supabase
+    const SUPABASE_URL = "https://rcbtpavqidddfzgdcfwh.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_JKkyHjxlcd3Ljd0yc63Oag_y9EomqIu";
     
     let supabaseClient = null;
     if (window.supabase && SUPABASE_URL !== "SUA_URL_SUPABASE" && !SUPABASE_URL.includes("SUA_URL")) {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
-    // Formatação de data no fuso local
     function formatToLocalDate(dateObj) {
       const y = dateObj.getFullYear();
       const m = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -230,6 +331,11 @@
     let dailyAppointments = [];
     let selectedSlot = null;
     let selectedAppointmentId = null;
+    let selectedPaymentMethod = 'Dinheiro';
+
+    // Dashboard State
+    let filterStartDate = currentDate;
+    let filterEndDate = currentDate;
 
     function generateTimes() {
       const times = [];
@@ -242,12 +348,13 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const dateInput = document.getElementById('currentDateInput');
-      dateInput.value = currentDate;
+      document.getElementById('currentDateInput').value = currentDate;
+      document.getElementById('filterStart').value = currentDate;
+      document.getElementById('filterEnd').value = currentDate;
       loadAgenda();
 
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW falhou:', err));
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW:', err));
       }
     });
 
@@ -279,11 +386,9 @@
             .select('*')
             .eq('data', currentDate);
 
-          if (!error && data) {
-            dailyAppointments = data;
-          }
+          if (!error && data) dailyAppointments = data;
         } catch (err) {
-          console.error("Erro na busca do banco:", err);
+          console.error("Erro ao buscar agenda:", err);
         }
       }
 
@@ -310,20 +415,19 @@
         if (!app) {
           card.innerHTML = `
             <div class="slot-time">${time}</div>
-            <div class="slot-info"><span style="color:var(--text-muted)">Disponível</span></div>
-            <button class="btn-action" onclick="openBookModal('${time}')"><i class="fa-solid fa-plus"></i></button>
+            <div class="slot-info"><span style="color:var(--text-muted); font-size:0.9rem;">Disponível</span></div>
+            <button class="btn-add" onclick="openBookModal('${time}')"><i class="fa-solid fa-plus"></i></button>
           `;
         } else {
-          const priceFormatted = parseFloat(app.valor || 0).toFixed(2);
           card.innerHTML = `
             <div class="slot-time">${time}</div>
             <div class="slot-info">
               <div class="name">${app.cliente}</div>
-              <div class="service">${app.servico || 'Corte'} - R$ ${priceFormatted}</div>
+              <div class="service">${app.servico || 'Corte'} ${app.concluido ? `• <b>R$ ${parseFloat(app.valor).toFixed(2)}</b> (${app.metodo_pagamento || 'Dinheiro'})` : ''}</div>
             </div>
             ${app.concluido 
-              ? `<span style="font-weight:700; color:var(--success); font-size:0.85rem;"><i class="fa-solid fa-check"></i> Concluído</span>`
-              : `<button class="btn-action btn-finish" onclick="openFinishModal('${app.id}', '${app.cliente}', ${app.valor})">Concluir</button>`
+              ? `<span style="font-weight:700; color:var(--success); font-size:0.85rem;"><i class="fa-solid fa-circle-check"></i> Pago</span>`
+              : `<button class="btn-finish" onclick="openFinishModal('${app.id}', '${app.cliente}')">Concluir</button>`
             }
           `;
         }
@@ -336,14 +440,14 @@
       document.getElementById('bookModalTitle').innerText = `Agendar às ${time}`;
       document.getElementById('clientNameInput').value = '';
       document.getElementById('bookModal').style.display = 'flex';
+      setTimeout(() => document.getElementById('clientNameInput').focus(), 100);
     }
 
     async function saveAppointment() {
       const cliente = document.getElementById('clientNameInput').value.trim();
       const servico = document.getElementById('serviceInput').value.trim();
-      const valor = parseFloat(document.getElementById('priceInput').value) || 0;
 
-      if (!cliente) return alert('Digite o nome do cliente!');
+      if (!cliente) return alert('Por favor, informe o nome do cliente!');
 
       if (supabaseClient) {
         const { error } = await supabaseClient.from('agendamentos').insert([{
@@ -351,8 +455,9 @@
           hora: selectedSlot,
           cliente,
           servico,
-          valor,
-          concluido: false
+          valor: 0,
+          concluido: false,
+          metodo_pagamento: 'Dinheiro'
         }]);
 
         if (error) alert("Erro ao salvar: " + error.message);
@@ -363,8 +468,9 @@
           hora: selectedSlot,
           cliente,
           servico,
-          valor,
-          concluido: false
+          valor: 0,
+          concluido: false,
+          metodo_pagamento: 'Dinheiro'
         });
       }
 
@@ -372,11 +478,22 @@
       loadAgenda();
     }
 
-    function openFinishModal(id, client, val) {
+    function openFinishModal(id, client) {
       selectedAppointmentId = id;
+      selectedPaymentMethod = 'Dinheiro';
+      
+      document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('selected'));
+      document.querySelector('.pay-btn').classList.add('selected');
+
       document.getElementById('finishClientName').innerText = client;
-      document.getElementById('finishPriceInput').value = val || 30;
+      document.getElementById('finishPriceInput').value = "30.00";
       document.getElementById('finishModal').style.display = 'flex';
+    }
+
+    function selectPayMethod(method, btn) {
+      selectedPaymentMethod = method;
+      document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
     }
 
     async function confirmFinish() {
@@ -384,13 +501,18 @@
 
       if (supabaseClient) {
         await supabaseClient.from('agendamentos')
-          .update({ concluido: true, valor: valorFinal })
+          .update({ 
+            concluido: true, 
+            valor: valorFinal,
+            metodo_pagamento: selectedPaymentMethod 
+          })
           .eq('id', selectedAppointmentId);
       } else {
         const app = dailyAppointments.find(a => a.id == selectedAppointmentId);
         if (app) {
           app.concluido = true;
           app.valor = valorFinal;
+          app.metodo_pagamento = selectedPaymentMethod;
         }
       }
 
@@ -418,48 +540,101 @@
       }
     }
 
-    async function loadDashboard() {
-      let records = [];
-      if (supabaseClient) {
-        const { data } = await supabaseClient.from('agendamentos').select('*').eq('concluido', true);
-        records = data || [];
-      } else {
-        records = dailyAppointments.filter(a => a.concluido);
+    // Controle dos Filtros de Faturamento
+    function setDashboardPeriod(period, btn) {
+      document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const now = new Date();
+      const todayStr = formatToLocalDate(now);
+
+      if (period === 'today') {
+        filterStartDate = todayStr;
+        filterEndDate = todayStr;
+      } else if (period === 'week') {
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay());
+        filterStartDate = formatToLocalDate(startOfWeek);
+        filterEndDate = todayStr;
+      } else if (period === 'month') {
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        filterStartDate = formatToLocalDate(startOfMonth);
+        filterEndDate = todayStr;
+      } else if (period === 'all') {
+        filterStartDate = '2025-01-01';
+        filterEndDate = todayStr;
       }
 
-      const todayParts = currentDate.split('-');
-      const todayDate = new Date(parseInt(todayParts[0]), parseInt(todayParts[1]) - 1, parseInt(todayParts[2]));
-      const currentMonth = `${todayParts[0]}-${todayParts[1]}`;
+      document.getElementById('filterStart').value = filterStartDate;
+      document.getElementById('filterEnd').value = filterEndDate;
+      loadDashboard();
+    }
 
-      const startOfWeek = new Date(todayDate);
-      startOfWeek.setDate(todayDate.getDate() - todayDate.getDay());
+    function applyCustomRange() {
+      document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('active'));
+      filterStartDate = document.getElementById('filterStart').value;
+      filterEndDate = document.getElementById('filterEnd').value;
+      loadDashboard();
+    }
 
-      let totalDay = 0, totalWeek = 0, totalMonth = 0;
+    async function loadDashboard() {
+      let records = [];
+
+      if (supabaseClient) {
+        const { data, error } = await supabaseClient
+          .from('agendamentos')
+          .select('*')
+          .eq('concluido', true)
+          .gte('data', filterStartDate)
+          .lte('data', filterEndDate)
+          .order('data', { ascending: false });
+
+        if (!error && data) records = data;
+      } else {
+        records = dailyAppointments.filter(a => a.concluido && a.data >= filterStartDate && a.data <= filterEndDate);
+      }
+
+      let total = 0;
+      let totalPix = 0;
+      let totalCard = 0;
+      let totalCash = 0;
 
       records.forEach(r => {
         const val = parseFloat(r.valor) || 0;
-        const [ry, rm, rd] = r.data.split('-');
-        const itemDate = new Date(parseInt(ry), parseInt(rm) - 1, parseInt(rd));
+        total += val;
 
-        if (r.data === currentDate) totalDay += val;
-        if (itemDate >= startOfWeek && itemDate <= todayDate) totalWeek += val;
-        if (r.data.startsWith(currentMonth)) totalMonth += val;
+        const method = (r.metodo_pagamento || '').toLowerCase();
+        if (method.includes('pix')) totalPix += val;
+        else if (method.includes('cart')) totalCard += val;
+        else totalCash += val;
       });
 
-      document.getElementById('totalDay').innerText = `R$ ${totalDay.toFixed(2)}`;
-      document.getElementById('totalWeek').innerText = `R$ ${totalWeek.toFixed(2)}`;
-      document.getElementById('totalMonth').innerText = `R$ ${totalMonth.toFixed(2)}`;
+      document.getElementById('kpiTotalValue').innerText = `R$ ${total.toFixed(2)}`;
+      document.getElementById('kpiTotalCount').innerText = `${records.length} corte(s) concluído(s)`;
+      document.getElementById('kpiPix').innerText = `R$ ${totalPix.toFixed(2)}`;
+      document.getElementById('kpiCard').innerText = `R$ ${totalCard.toFixed(2)}`;
+      document.getElementById('kpiCash').innerText = `R$ ${totalCash.toFixed(2)}`;
 
       const list = document.getElementById('finishedList');
-      list.innerHTML = records.slice(-8).reverse().map(r => {
-        const dParts = r.data.split('-');
+      if (records.length === 0) {
+        list.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:10px;">Nenhum corte registrado neste período.</p>`;
+        return;
+      }
+
+      list.innerHTML = records.map(r => {
+        const [y, m, d] = r.data.split('-');
         return `
-          <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f1f5f9;">
-            <span>${dParts[2]}/${dParts[1]} às ${r.hora} - <b>${r.cliente}</b></span>
-            <span style="font-weight:700; color:var(--gold-primary)">R$ ${parseFloat(r.valor).toFixed(2)}</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f1f5f9;">
+            <div>
+              <div style="font-weight:700; color:var(--text-dark);">${r.cliente}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">${d}/${m} às ${r.hora} • ${r.metodo_pagamento || 'Dinheiro'}</div>
+            </div>
+            <div style="font-weight:800; color:var(--gold-dark); font-size:1rem;">
+              R$ ${parseFloat(r.valor).toFixed(2)}
+            </div>
           </div>
         `;
-      }).join('') || '<p>Nenhum corte registrado ainda.</p>';
+      }).join('');
     }
   </script>
 </body>
