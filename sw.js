@@ -1,4 +1,4 @@
-const CACHE_NAME = 'magalhaes-barbearia-v1';
+const CACHE_NAME = 'magalhaes-barbearia-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -19,9 +19,7 @@ self.addEventListener('activate', (e) => {
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
+          if (key !== CACHE_NAME) return caches.delete(key);
         })
       );
     })
@@ -31,8 +29,6 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((res) => {
-      return res || fetch(e.request);
-    })
+    caches.match(e.request).then((res) => res || fetch(e.request))
   );
 });
